@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PokeApp</string>
+
+
+
+    <!--Acciones para botones -->
+    <string name="arrow_back">Volver atrás</string>
+    <string name="home_icon">Inicio</string>
+    <string name="account_icon">Mi perfil</string>
+    <string name="game_icon">Jugar</string>
+</resources>
