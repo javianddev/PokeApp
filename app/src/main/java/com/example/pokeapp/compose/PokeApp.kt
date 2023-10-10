@@ -1,4 +1,4 @@
-package com.example.pokeapp.ui
+package com.example.pokeapp.compose
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,17 +21,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
+import com.example.pokeapp.compose.home.HomeScreen
+import com.example.pokeapp.compose.navigation.AppScreens
+import com.example.pokeapp.compose.navigation.PokeAppNavHost
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeAppScreen(){
+fun PokeApp(){
+
+    val navController = rememberNavController()
 
     val modifier = Modifier
         .fillMaxWidth()
@@ -47,19 +57,18 @@ fun PokeAppScreen(){
     //val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
-        topBar = { TopPokeAppBar( scrollBehavior = scrollBehavior) },
-        bottomBar = { BottomPokeAppBar() },
+        topBar = { TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController) },
+        bottomBar = { BottomPokeAppBar( navController = navController ) },
     ){
-        PokeAppMainScreen(
-            modifier = modifier.padding(it)
-        )
+        PokeAppNavHost(navController, modifier = modifier.padding(it))
     }
 
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = Modifier){
+fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, modifier: Modifier = Modifier){
 
     CenterAlignedTopAppBar(
         title = { Image(
@@ -67,8 +76,8 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = 
             contentDescription = stringResource(id = R.string.app_name)
         ) },
         scrollBehavior = scrollBehavior,
-        navigationIcon = { //Esta flecha hay que ocultarla obviamente
-            IconButton(onClick = { /* TODO */ }) {
+        navigationIcon = {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(id = R.string.arrow_back),
@@ -83,9 +92,10 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, modifier: Modifier = 
 }
 
 @Composable
-fun BottomPokeAppBar(modifier: Modifier = Modifier){
+fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modifier){
 
     val iconModifier: Modifier = Modifier.size(dimensionResource(id = R.dimen.icon_large))
+    val currentRoute = currentRoute(navController)
 
     BottomAppBar(
         actions = {
@@ -94,14 +104,17 @@ fun BottomPokeAppBar(modifier: Modifier = Modifier){
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = modifier.fillMaxWidth()
             ){
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    if (currentRoute != AppScreens.ProfileScreen.route)
+                        navController.navigate(AppScreens.ProfileScreen.route)
+                }) {
                     Icon(
                         imageVector = Icons.Filled.AccountCircle,
                         contentDescription = stringResource(id = R.string.account_icon),
                         modifier = iconModifier
                     )
                 }
-                IconButton(onClick = { /*TODO*/ }){
+                IconButton(onClick = { navController.navigate(AppScreens.HomeScreen.route) }){
                     Icon(
                         imageVector = Icons.Filled.Home,
                         contentDescription = stringResource(id = R.string.home_icon),
@@ -123,17 +136,37 @@ fun BottomPokeAppBar(modifier: Modifier = Modifier){
 }
 
 @Composable
-fun PokeAppMainScreen(modifier: Modifier = Modifier){
-
-
+private fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }
-
-//--------------------------- PREVIEWS -----------------------------//
 
 @Preview(name = "Vista Principal")
 @Composable
 fun PokeAppScreenPreview(){
 
-    PokeAppScreen()
+    val navController = rememberNavController()
 
+    HomeScreen(navController)
 }
+
+@Preview(name="Barra inferior")
+@Composable
+fun BottomAppBarPreview(){
+
+    val navController = rememberNavController()
+
+    BottomPokeAppBar(navController, Modifier.fillMaxWidth())
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(name="Barra superior")
+@Composable
+fun TopAppBarPreview(){
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val navController = rememberNavController()
+
+    TopPokeAppBar(scrollBehavior, navController)
+}
+

@@ -3,7 +3,7 @@ package com.example.pokeapp.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xffff0000)
-val md_theme_background = Color(0xfffffbfe)
+val md_theme_background = Color(0xfff5f5f5)
 
 /* Ejemplo para mí
 val md_theme_light_primary = Color(0xFF6750A4)
