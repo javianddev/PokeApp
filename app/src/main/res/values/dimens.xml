@@ -5,4 +5,10 @@
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large">32dp</dimen>
     <dimen name="icon_large">32dp</dimen>
+    <dimen name="icon_medium">24dp</dimen>
+    <dimen name="icon_small">16dp</dimen>
+    <dimen name="default_card_elevation">10dp</dimen>
+    <dimen name="bottom_bar_height">50dp</dimen>
+    <dimen name="profile_image">200dp</dimen>
+    <dimen name="medal_image">50dp</dimen>
 </resources>

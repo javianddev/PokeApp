@@ -12,12 +12,6 @@ fun HomeScreen(navController: NavController, modifier: Modifier = Modifier){
 
     Column(){
         Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
-        Text(text = "HomeScreen ")
     }
 
 

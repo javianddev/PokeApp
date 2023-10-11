@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -28,7 +29,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -59,8 +59,8 @@ fun PokeApp(){
     Scaffold(
         topBar = { TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController) },
         bottomBar = { BottomPokeAppBar( navController = navController ) },
-    ){
-        PokeAppNavHost(navController, modifier = modifier.padding(it))
+    ){innerPadding ->
+        PokeAppNavHost(navController, modifier = modifier.padding(innerPadding))
     }
 
 }
@@ -77,12 +77,15 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHos
         ) },
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.arrow_back),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+
+            if (!currentRoute(navController).equals(AppScreens.HomeScreen.route)) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(id = R.string.arrow_back),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -94,7 +97,7 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHos
 @Composable
 fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modifier){
 
-    val iconModifier: Modifier = Modifier.size(dimensionResource(id = R.dimen.icon_large))
+    val iconModifier: Modifier = Modifier.size(dimensionResource(id = R.dimen.icon_medium))
     val currentRoute = currentRoute(navController)
 
     BottomAppBar(
@@ -121,7 +124,7 @@ fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modi
                         modifier = iconModifier
                     )
                 }
-                IconButton(onClick = { /*TODO*/ }){
+                IconButton(onClick = { navController.navigate(AppScreens.GamesScreen.route) }){
                     Icon(
                         imageVector = Icons.Filled.VideogameAsset,
                         contentDescription = stringResource(id = R.string.game_icon),
@@ -131,6 +134,7 @@ fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modi
             }
         },
         containerColor = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.height(dimensionResource(id = R.dimen.bottom_bar_height))
     )
 
 }
