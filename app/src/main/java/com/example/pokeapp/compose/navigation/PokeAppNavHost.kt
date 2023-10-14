@@ -8,8 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.pokeapp.compose.games.GamesScreen
 import com.example.pokeapp.compose.home.HomeScreen
+import com.example.pokeapp.compose.options.EditProfile
+import com.example.pokeapp.compose.options.OptionsScreen
 import com.example.pokeapp.compose.profile.ProfileScreen
 
 @Composable
@@ -33,11 +34,14 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             ProfileScreen()
         }
-        composable(AppScreens.GamesScreen.route){
+        composable(AppScreens.OptionsScreen.route){
             if (activity.requestedOrientation  == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             }
-            GamesScreen(navController)
+            OptionsScreen(navController)
+        }
+        composable(AppScreens.EditProfile.route){
+            EditProfile(navController)
         }
     }
 

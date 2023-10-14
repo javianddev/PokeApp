@@ -1,6 +1,5 @@
-package com.example.pokeapp.compose.games
+package com.example.pokeapp.compose.options
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,24 +22,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
+import com.example.pokeapp.compose.navigation.optionLinks
 
-//Esto irá configurado finalmente por opciones que saldrán de base de datos, no van a ser fijas
 @Composable
-fun GamesScreen(navController: NavController, modifier: Modifier = Modifier){
-
-    val options = listOf("Editar Perfil", "PokeTrivial")
+fun OptionsScreen(navController: NavController, modifier: Modifier = Modifier){
 
     LazyColumn(
         modifier = modifier.fillMaxWidth()
-    ){//Ya se pondrá con su items() y demás
-        items(options){option ->
+    ){
+        items(optionLinks){option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
             ){
-                Text("$option")
+                Text(stringResource(id = option.text))
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = { /*TODO --> Aquí habría un navigate a la pantalla que corresponda*/ }) {
+                IconButton(onClick = { navController.navigate(option.route) }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowRight,
                         contentDescription = stringResource(id = R.string.arrow_right),
@@ -62,5 +59,5 @@ fun GamesScreen(navController: NavController, modifier: Modifier = Modifier){
 fun GamesScreenPreview(){
 
     val navController = rememberNavController()
-    GamesScreen(navController)
+    OptionsScreen(navController)
 }

@@ -55,11 +55,11 @@ fun ProfileScreen(modifier: Modifier = Modifier){
                         style= MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text="${stringResource(id = R.string.born_date)}: ${stringResource(id = R.string.default_born_date)}",
+                        text="${stringResource(id = R.string.birthdate)}: ${stringResource(id = R.string.default_born_date)}",
                         style= MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = "${stringResource(id = R.string.born_place)}: ${stringResource(id = R.string.default_born_place)}",
+                        text = "${stringResource(id = R.string.birthplace)}: ${stringResource(id = R.string.default_born_place)}",
                         style= MaterialTheme.typography.bodyLarge
                     )
                     Spacer(Modifier.weight(1f))
