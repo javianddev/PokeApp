@@ -28,5 +28,5 @@
     <string name="edit_profile_icon">Editar perfil</string>
     <string name="options_icon">Opciones</string>
     <string name="arrow_right">Siguiente</string>
-
+    <string name="save_button">Guardar Datos</string>
 </resources>
