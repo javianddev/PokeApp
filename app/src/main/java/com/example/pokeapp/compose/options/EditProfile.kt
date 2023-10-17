@@ -116,7 +116,8 @@ fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
 
         Button(
             onClick = { /*TODO SAVE*/ },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
         ) {
             Text(
                 text = stringResource(id = R.string.save_button)
@@ -151,8 +152,14 @@ fun PokeDatePickerDialog(birthdate: (Long) -> Unit) {
             selectedDate = "$dayOfMonth/${month+1}/$year"
             birthdate(newDate.timeInMillis)
         }, year, month, day)
-    //Hay que limitar las fechas de cumpleaños
 
+    //Limitamos hasta 75 años y subimos hasta 18 años, por poner un límite al control de fechas
+    val limitC = Calendar.getInstance()
+    limitC.add(Calendar.YEAR, -75)
+    datePickerDialog.datePicker.minDate = limitC.time.time
+    //Hay que limitar las fechas de cumpleaños
+    limitC.add(Calendar.YEAR, 57)
+    datePickerDialog.datePicker.maxDate = limitC.time.time
 
     datePickerDialog
     OutlinedTextField(
