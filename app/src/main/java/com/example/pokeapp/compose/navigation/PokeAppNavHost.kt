@@ -41,6 +41,9 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
             OptionsScreen(navController)
         }
         composable(AppScreens.EditProfile.route){
+            if (activity.requestedOrientation  == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
             EditProfile(navController)
         }
     }

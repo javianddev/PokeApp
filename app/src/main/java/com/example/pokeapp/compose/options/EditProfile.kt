@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,20 +38,24 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
-import java.text.SimpleDateFormat
+import com.example.pokeapp.utils.toDate
+import com.example.pokeapp.utils.toFormattedString
+import com.example.pokeapp.viewmodels.EditProfileViewModel
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
+fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = hiltViewModel(), modifier: Modifier = Modifier){
 
+    val editProfileState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
     val formModifier = Modifier
         .padding(dimensionResource(id = R.dimen.padding_medium))
@@ -65,8 +69,8 @@ fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
             .padding(dimensionResource(id = R.dimen.padding_medium))
     ){
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = editProfileState.name,
+            onValueChange = {viewModel.setName(it)},
             singleLine = true,
             placeholder = { Text(text = stringResource(id = R.string.trainer_name)) },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.shape_medium)),
@@ -89,8 +93,8 @@ fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
         )
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = editProfileState.birthplace,
+            onValueChange = {viewModel.setBirthplace(it)},
             singleLine = true,
             placeholder = { Text(text = stringResource(id = R.string.birthplace)) },
             shape = RoundedCornerShape(dimensionResource(id = R.dimen.shape_medium)),
@@ -112,10 +116,65 @@ fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
             modifier = formModifier
         )
 
-        PokeDatePickerDialog{birthdate = it}
+        /************************************************/
+        /**************INICIO DIALOG********************/
+        /***********************************************/
+
+        val interactionSource = remember { MutableInteractionSource() }
+        val isPressed: Boolean by interactionSource.collectIsPressedAsState()
+
+        var selectedDate by rememberSaveable { mutableStateOf(editProfileState.birthdate.toFormattedString()) }
+
+        val context = LocalContext.current
+
+        val year: Int = editProfileState.birthdate.year
+        val month: Int = editProfileState.birthdate.month
+        val day: Int = editProfileState.birthdate.day
+
+        val datePickerDialog =
+            DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                focusManager.clearFocus()
+                val newDate = Calendar.getInstance()
+                newDate.set(year, month, dayOfMonth)
+                selectedDate = editProfileState.birthdate.toFormattedString()
+            }, year, month, day)
+
+        //Limitamos hasta 75 años y subimos hasta 18 años, por poner un límite al control de fechas
+        val limitC = Calendar.getInstance()
+        limitC.add(Calendar.YEAR, -75)
+        datePickerDialog.datePicker.minDate = limitC.time.time
+        //Hay que limitar las fechas de cumpleaños
+        limitC.add(Calendar.YEAR, 57)
+        datePickerDialog.datePicker.maxDate = limitC.time.time
+
+        OutlinedTextField(
+            value = selectedDate,
+            onValueChange = {viewModel.setBirthdate(it.toDate())},
+            readOnly = true,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.CalendarMonth,
+                    contentDescription = null
+                )
+            },
+            interactionSource = interactionSource,
+            modifier = formModifier
+        )
+        if (isPressed) {
+            datePickerDialog.show()
+        }
+
+        /************************************************/
+        /**************FIN DIALOG***********************/
+        /***********************************************/
+
+        var savedProfile by remember { mutableStateOf(false) }
 
         Button(
-            onClick = { /*TODO SAVE*/ },
+            onClick = {
+                viewModel.saveProfile(editProfileState)
+                savedProfile = true
+            },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
         ) {
@@ -123,70 +182,16 @@ fun EditProfile(navController: NavController, modifier: Modifier = Modifier){
                 text = stringResource(id = R.string.save_button)
             )
         }
-    }
 
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PokeDatePickerDialog(birthdate: (Long) -> Unit) {
-
-    val focusManager = LocalFocusManager.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-
-    var selectedDate by rememberSaveable { mutableStateOf("dd/MM/yyyy") }
-
-    val context = LocalContext.current
-
-    val calendar = Calendar.getInstance()
-    val year: Int = calendar.get(Calendar.YEAR).minus(18)
-    val month: Int = calendar.get(Calendar.MONTH)
-    val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
-
-    val datePickerDialog =
-        DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            focusManager.clearFocus()
-            val newDate = Calendar.getInstance()
-            newDate.set(year, month, dayOfMonth)
-            selectedDate = "$dayOfMonth/${month+1}/$year"
-            birthdate(newDate.timeInMillis)
-        }, year, month, day)
-
-    //Limitamos hasta 75 años y subimos hasta 18 años, por poner un límite al control de fechas
-    val limitC = Calendar.getInstance()
-    limitC.add(Calendar.YEAR, -75)
-    datePickerDialog.datePicker.minDate = limitC.time.time
-    //Hay que limitar las fechas de cumpleaños
-    limitC.add(Calendar.YEAR, 57)
-    datePickerDialog.datePicker.maxDate = limitC.time.time
-
-    datePickerDialog
-    OutlinedTextField(
-        value = selectedDate,
-        onValueChange = {},
-        readOnly = true,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.CalendarMonth,
-                contentDescription = null
+        if (savedProfile){
+            Text(
+                text = stringResource(id = R.string.saved_profile),
+                textAlign = TextAlign.Center,
+                modifier = formModifier
             )
-        },
-        interactionSource = interactionSource,
-
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.padding_medium))
-
-    )
-    if (isPressed) {
-        datePickerDialog.show()
+        }
     }
-}
 
-fun Date.toFormattedString(): String {
-    val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return simpleDateFormat.format(this)
 }
 
 @Preview("Editar Perfil")

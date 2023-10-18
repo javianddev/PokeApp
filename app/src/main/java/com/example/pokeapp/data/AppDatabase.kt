@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.pokeapp.data.converters.DateConverter
 import com.example.pokeapp.data.dao.ProfileDao
 import com.example.pokeapp.data.models.Profile
 
 @Database(entities = arrayOf(Profile::class), version = 1, exportSchema = false)
+@TypeConverters(DateConverter::class)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun profileDao(): ProfileDao

@@ -29,4 +29,7 @@
     <string name="options_icon">Opciones</string>
     <string name="arrow_right">Siguiente</string>
     <string name="save_button">Guardar Datos</string>
+
+    <!--Mensajes -->
+    <string name="saved_profile">¡Datos Guardados!</string>
 </resources>

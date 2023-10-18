@@ -9,7 +9,7 @@ import java.util.Date
 @Entity(tableName = "PROFILE")
 data class Profile(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int,
 
     @NonNull
@@ -23,4 +23,8 @@ data class Profile(
     @NonNull
     @ColumnInfo(name = "birthplace")
     val birthplace: String,
+
+    @NonNull
+    @ColumnInfo(name = "defaultProfile")
+    val defaultProfile: Boolean
 )
