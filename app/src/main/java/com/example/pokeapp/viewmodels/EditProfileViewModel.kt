@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 import javax.inject.Inject
 
@@ -33,7 +35,7 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
         }
     }
 
-    fun setBirthdate(birthdate: Date){
+    fun setBirthdate(birthdate: LocalDateTime){
             _uiState.update{ currentState ->
                 uiState.value.copy(
                     birthdate = birthdate
@@ -87,5 +89,5 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
 data class EditProfileUiState(
     val name: String = "",
     val birthplace: String = "",
-    val birthdate: Date = Date()
+    val birthdate: LocalDateTime = LocalDateTime.now().minusYears(18)
 )

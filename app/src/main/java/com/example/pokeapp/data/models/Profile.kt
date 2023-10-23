@@ -4,7 +4,7 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import java.time.LocalDateTime
 
 @Entity(tableName = "PROFILE")
 data class Profile(
@@ -18,7 +18,7 @@ data class Profile(
 
     @NonNull
     @ColumnInfo(name = "birthdate")
-    val birthdate: Date,
+    val birthdate: LocalDateTime,
 
     @NonNull
     @ColumnInfo(name = "birthplace")

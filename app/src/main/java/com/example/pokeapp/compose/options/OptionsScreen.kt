@@ -1,5 +1,6 @@
 package com.example.pokeapp.compose.options
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,17 +34,17 @@ fun OptionsScreen(navController: NavController, modifier: Modifier = Modifier){
         items(optionLinks){option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.padding_medium))
+                    .clickable { navController.navigate(option.route) }
             ){
                 Text(stringResource(id = option.text))
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = { navController.navigate(option.route) }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowRight,
-                        contentDescription = stringResource(id = R.string.arrow_right),
-                        modifier = Modifier.size(dimensionResource(id = R.dimen.icon_medium))
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Filled.ArrowRight,
+                    contentDescription = stringResource(id = R.string.arrow_right),
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.icon_medium))
+                )
             }
             Divider()
         }

@@ -17,7 +17,7 @@ sealed class AppScreens(
     object HomeScreen: AppScreens("home", Icons.Filled.Home, R.string.home_icon, R.string.home)
     object ProfileScreen: AppScreens("profile", Icons.Filled.AccountCircle, R.string.profile_icon,R.string.profile)
     object OptionsScreen: AppScreens("options", Icons.Filled.Extension, R.string.options_icon, R.string.options)
-    object EditProfile: AppScreens("options/edit_profile", Icons.Filled.Create, R.string.edit_profile_icon, R.string.edit_profile)
+    object EditProfile: AppScreens("edit_profile", Icons.Filled.Create, R.string.edit_profile_icon, R.string.edit_profile) //Ruta secundaria de options
 }
 
 

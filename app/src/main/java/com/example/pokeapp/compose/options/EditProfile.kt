@@ -44,11 +44,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
-import com.example.pokeapp.utils.toDate
 import com.example.pokeapp.utils.toFormattedString
+import com.example.pokeapp.utils.toLocalDateTime
 import com.example.pokeapp.viewmodels.EditProfileViewModel
 import java.util.Calendar
-import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +59,6 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
     val formModifier = Modifier
         .padding(dimensionResource(id = R.dimen.padding_medium))
         .fillMaxWidth()
-    var birthdate by rememberSaveable { mutableStateOf(Date().time) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -116,10 +114,10 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
             modifier = formModifier
         )
 
+
         /************************************************/
         /**************INICIO DIALOG********************/
         /***********************************************/
-
         val interactionSource = remember { MutableInteractionSource() }
         val isPressed: Boolean by interactionSource.collectIsPressedAsState()
 
@@ -128,8 +126,8 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
         val context = LocalContext.current
 
         val year: Int = editProfileState.birthdate.year
-        val month: Int = editProfileState.birthdate.month
-        val day: Int = editProfileState.birthdate.day
+        val month: Int = editProfileState.birthdate.month.value
+        val day: Int = editProfileState.birthdate.dayOfMonth
 
         val datePickerDialog =
             DatePickerDialog(context, { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
@@ -149,8 +147,10 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
 
         OutlinedTextField(
             value = selectedDate,
-            onValueChange = {viewModel.setBirthdate(it.toDate())},
+            onValueChange = {viewModel.setBirthdate(it.toLocalDateTime())},
+            placeholder = { Text(text = stringResource(id = R.string.birthdate)) },
             readOnly = true,
+            shape = RoundedCornerShape(dimensionResource(id = R.dimen.shape_medium)),
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.CalendarMonth,

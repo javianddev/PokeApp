@@ -1,16 +1,16 @@
 package com.example.pokeapp.data.converters
 
 import androidx.room.TypeConverter
-import java.util.Date
+import java.time.LocalDateTime
 
 class DateConverter {
     @TypeConverter
-    fun toDate(timestamp: Long?): Date? {
-        return timestamp?.let { Date(it) }
+    fun fromTimestamp(value: String?): LocalDateTime? {
+        return value?.let { LocalDateTime.parse(it) }
     }
 
     @TypeConverter
-    fun toTimestamp(date: Date?): Long? {
-        return if (date == null) null else date.getTime()
+    fun dateToTimestamp(date: LocalDateTime?): String? {
+        return date?.toString()
     }
 }

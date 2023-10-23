@@ -35,6 +35,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -100,6 +101,9 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    //Para poder usa java.time. Fuente: https://developer.android.com/studio/write/java8-support?hl=es-419
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
 
 }
 

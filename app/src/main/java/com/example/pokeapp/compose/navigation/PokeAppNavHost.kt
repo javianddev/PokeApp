@@ -2,12 +2,16 @@ package com.example.pokeapp.compose.navigation
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.pokeapp.compose.home.HomeScreen
 import com.example.pokeapp.compose.options.EditProfile
 import com.example.pokeapp.compose.options.OptionsScreen
@@ -40,11 +44,13 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
             }
             OptionsScreen(navController)
         }
-        composable(AppScreens.EditProfile.route){
+        composable(
+            route = AppScreens.EditProfile.route
+        ) {
             if (activity.requestedOrientation  == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
                 activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             }
-            EditProfile(navController)
+               EditProfile(navController = navController)
         }
     }
 
