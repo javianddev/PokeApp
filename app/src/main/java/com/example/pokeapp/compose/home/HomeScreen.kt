@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun HomeScreen(navController: NavController, modifier: Modifier = Modifier){
+fun HomeScreen(modifier: Modifier = Modifier){
 
     Column(){
         Text(text = "HomeScreen ")

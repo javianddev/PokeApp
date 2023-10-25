@@ -20,7 +20,7 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
     val uiState = _uiState.asStateFlow()
 
     init {
-        getProfile()
+        //getProfile() //Prepopulate database
     }
 
     fun getProfile(){

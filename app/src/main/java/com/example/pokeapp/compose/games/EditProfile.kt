@@ -1,4 +1,4 @@
-package com.example.pokeapp.compose.options
+package com.example.pokeapp.compose.games
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
@@ -38,11 +38,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
 import com.example.pokeapp.utils.toFormattedString
 import com.example.pokeapp.utils.toLocalDateTime
@@ -52,7 +49,11 @@ import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = hiltViewModel(), modifier: Modifier = Modifier){
+fun EditProfile(
+    onClick: () -> Unit = {},
+    viewModel: EditProfileViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+){
 
     val editProfileState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -168,26 +169,16 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
         /**************FIN DIALOG***********************/
         /***********************************************/
 
-        var savedProfile by remember { mutableStateOf(false) }
-
         Button(
             onClick = {
                 viewModel.saveProfile(editProfileState)
-                savedProfile = true
+                onClick
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
         ) {
             Text(
                 text = stringResource(id = R.string.save_button)
-            )
-        }
-
-        if (savedProfile){
-            Text(
-                text = stringResource(id = R.string.saved_profile),
-                textAlign = TextAlign.Center,
-                modifier = formModifier
             )
         }
     }
@@ -198,7 +189,5 @@ fun EditProfile(navController: NavController, viewModel: EditProfileViewModel = 
 @Composable
 fun EditProfilePreview(){
 
-    val navController = rememberNavController()
-
-    EditProfile(navController)
+    EditProfile()
 }

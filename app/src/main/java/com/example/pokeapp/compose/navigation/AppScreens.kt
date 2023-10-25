@@ -12,15 +12,29 @@ sealed class AppScreens(
     val route: String,
     val painter: ImageVector,
     val homeIcon: Int,
-    val text: Int){
+    val text: Int,
+    ){
 
-    object HomeScreen: AppScreens("home", Icons.Filled.Home, R.string.home_icon, R.string.home)
-    object ProfileScreen: AppScreens("profile", Icons.Filled.AccountCircle, R.string.profile_icon,R.string.profile)
-    object OptionsScreen: AppScreens("options", Icons.Filled.Extension, R.string.options_icon, R.string.options)
-    object EditProfile: AppScreens("edit_profile", Icons.Filled.Create, R.string.edit_profile_icon, R.string.edit_profile) //Ruta secundaria de options
+    data object Graph {
+        const val HOME = "home_graph"
+        const val TRAINER = "trainer_graph"
+        const val GAMES = "games_graph"
+    }
+    data object HomeScreen: AppScreens("home", Icons.Filled.Home, R.string.home_icon, R.string.home)
+    data object ProfileScreen: AppScreens("trainer", Icons.Filled.AccountCircle, R.string.trainer_icon,R.string.trainer)
+    data object GamesScreen: AppScreens("games", Icons.Filled.Extension, R.string.options_icon, R.string.options)
+    data object EditTrainer: AppScreens("edit_trainer", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.edit_trainer) //Ruta secundaria de profile
+
+    //Cambiar los datos de estas tres
+    data object KantoMedal: AppScreens("kanto", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.kanto_medals) //Ruta secundaria de game
+    data object JohtoMedal: AppScreens("johto", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.johto_medals) //Ruta secundaria de game
+    data object HoennMedal: AppScreens("hoenn", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.hoenn_medals) //Ruta secundaria de game
+
 }
 
 
-val routes = listOf(AppScreens.ProfileScreen, AppScreens.HomeScreen, AppScreens.OptionsScreen)
+val routes = listOf(AppScreens.ProfileScreen, AppScreens.HomeScreen, AppScreens.GamesScreen)
 
-val optionLinks = listOf(AppScreens.EditProfile)
+val bottomRoutes = listOf("home", "trainer", "games")
+
+val gameLinks = listOf(AppScreens.KantoMedal, AppScreens.JohtoMedal, AppScreens.HoennMedal)

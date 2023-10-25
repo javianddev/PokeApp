@@ -14,18 +14,21 @@
     <string name="default_trainer_image">Imagen de entrenador pokémon por defecto</string>
 
     <!--Strings de opciones -->
-    <string name="edit_profile">Editar Perfil</string>
-    <string name="profile">Mi perfil</string>
+    <string name="edit_trainer">Editar Perfil</string>
+    <string name="trainer">Mi perfil</string>
     <string name="home">Inicio</string>
     <string name="options">Opciones</string>
     <string name="select_birthdate">Selecciona fecha de cumpleaños</string>
     <string name="selected_birthdate">Fecha seleccionada</string>
+    <string name="kanto_medals">Medallas de Kanto</string>
+    <string name="johto_medals">Medallas de Johto</string>
+    <string name="hoenn_medals">Medallas de Hoenn</string>
 
     <!--Acciones para botones -->
     <string name="arrow_back">Volver atrás</string>
     <string name="home_icon">Inicio</string>
-    <string name="profile_icon">Mi perfil</string>
-    <string name="edit_profile_icon">Editar perfil</string>
+    <string name="trainer_icon">Mi perfil</string>
+    <string name="edit_trainer_icon">Editar perfil</string>
     <string name="options_icon">Opciones</string>
     <string name="arrow_right">Siguiente</string>
     <string name="save_button">Guardar Datos</string>

@@ -1,5 +1,6 @@
 package com.example.pokeapp.ui.theme
 
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -28,9 +29,19 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp
     ),
-    labelLarge = TextStyle(
+    titleSmall = TextStyle(
         fontFamily = Poppins,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = Poppins,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp
     )
 )

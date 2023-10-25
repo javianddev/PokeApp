@@ -30,8 +30,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.home.HomeScreen
-import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.compose.navigation.PokeAppNavHost
+import com.example.pokeapp.compose.navigation.bottomRoutes
 import com.example.pokeapp.compose.navigation.routes
 
 
@@ -62,7 +62,7 @@ fun PokeApp(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, modifier: Modifier = Modifier){
+fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController){
 
     CenterAlignedTopAppBar(
         title = { Image(
@@ -71,8 +71,7 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHos
         ) },
         scrollBehavior = scrollBehavior,
         navigationIcon = {
-
-            if (!currentRoute(navController).equals(AppScreens.HomeScreen.route)) {
+            if (currentRoute(navController) !in bottomRoutes) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
@@ -95,6 +94,7 @@ fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modi
         backgroundColor = MaterialTheme.colorScheme.primary,
         modifier = modifier.height(dimensionResource(id = R.dimen.bottom_bar_height))
     ) {
+
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
@@ -126,10 +126,7 @@ private fun currentRoute(navController: NavHostController): String? {
 @Preview(name = "Vista Principal")
 @Composable
 fun PokeAppScreenPreview(){
-
-    val navController = rememberNavController()
-
-    HomeScreen(navController)
+    HomeScreen()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

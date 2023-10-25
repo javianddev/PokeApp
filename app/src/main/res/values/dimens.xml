@@ -10,6 +10,6 @@
     <dimen name="default_card_elevation">10dp</dimen>
     <dimen name="bottom_bar_height">50dp</dimen>
     <dimen name="profile_image">200dp</dimen>
-    <dimen name="medal_image">50dp</dimen>
+    <dimen name="medal_image">42dp</dimen>
     <dimen name="spacer100">100dp</dimen>
 </resources>
