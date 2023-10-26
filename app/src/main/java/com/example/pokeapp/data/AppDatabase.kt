@@ -6,14 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.pokeapp.data.converters.DateConverter
-import com.example.pokeapp.data.dao.ProfileDao
-import com.example.pokeapp.data.models.Profile
+import com.example.pokeapp.data.dao.TrainerDao
+import com.example.pokeapp.data.models.Trainer
 
-@Database(entities = arrayOf(Profile::class), version = 2, exportSchema = false)
+@Database(entities = [Trainer::class], version = 1, exportSchema = false)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase: RoomDatabase() {
 
-    abstract fun profileDao(): ProfileDao
+    abstract fun trainerDao(): TrainerDao
 
     companion object {
 
@@ -25,8 +25,9 @@ abstract class AppDatabase: RoomDatabase() {
                 Room.databaseBuilder(
                     context,
                     AppDatabase::class.java,
-                    "pokemon_database"
+                    "poke_db"
                 )
+                    .createFromAsset("database/pokedb.db")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also{Instance = it}

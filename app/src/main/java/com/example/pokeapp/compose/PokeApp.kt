@@ -98,13 +98,19 @@ fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modi
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        routes.forEach{ screen ->
+        routes.forEach { screen ->
             BottomNavigationItem(
-                icon = { Icon(imageVector = screen.painter, contentDescription = stringResource(id = screen.homeIcon), tint = MaterialTheme.colorScheme.onPrimary)},
+                icon = {
+                    Icon(
+                        imageVector = screen.painter,
+                        contentDescription = stringResource(id = screen.homeIcon),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    navController.navigate(screen.route){
-                        popUpTo(navController.graph.findStartDestination().id){
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
                         launchSingleTop = true
@@ -114,7 +120,6 @@ fun BottomPokeAppBar(navController: NavHostController, modifier: Modifier = Modi
             )
         }
     }
-
 }
 
 @Composable

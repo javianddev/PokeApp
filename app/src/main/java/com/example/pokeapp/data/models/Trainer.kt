@@ -4,10 +4,10 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.time.LocalDateTime
+import java.time.LocalDate
 
-@Entity(tableName = "PROFILE")
-data class Profile(
+@Entity(tableName = "TRAINER")
+data class Trainer(
 
     @PrimaryKey
     val id: Int,
@@ -18,13 +18,9 @@ data class Profile(
 
     @NonNull
     @ColumnInfo(name = "birthdate")
-    val birthdate: LocalDateTime,
+    val birthdate: LocalDate,
 
     @NonNull
     @ColumnInfo(name = "birthplace")
     val birthplace: String,
-
-    @NonNull
-    @ColumnInfo(name = "defaultProfile")
-    val defaultProfile: Boolean
 )

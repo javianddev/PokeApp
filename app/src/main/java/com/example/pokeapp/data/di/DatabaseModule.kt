@@ -2,7 +2,7 @@ package com.example.pokeapp.data.di
 
 import android.content.Context
 import com.example.pokeapp.data.AppDatabase
-import com.example.pokeapp.data.dao.ProfileDao
+import com.example.pokeapp.data.dao.TrainerDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +21,7 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideProfileDao(appDatabase: AppDatabase): ProfileDao {
-        return appDatabase.profileDao()
+    fun provideProfileDao(appDatabase: AppDatabase): TrainerDao {
+        return appDatabase.trainerDao()
     }
 }

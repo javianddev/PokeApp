@@ -1,18 +1,15 @@
-package com.example.pokeapp.compose.profile
+package com.example.pokeapp.compose.trainer
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,17 +24,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.pokeapp.R
+import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.utils.toFormattedString
-import com.example.pokeapp.viewmodels.ProfileViewModel
+import com.example.pokeapp.viewmodels.TrainerViewModel
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel = hiltViewModel(), onClickEditProfile: () -> Unit = {}){
+fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = hiltViewModel(), navController: NavController){
 
-    val profileState by viewModel.uiState.collectAsState()
+    val trainerState by viewModel.uiState.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,19 +62,19 @@ fun ProfileScreen(modifier: Modifier = Modifier, viewModel: ProfileViewModel = h
                     horizontalAlignment = Alignment.Start
                 ){
                     Text(
-                        text = "Nombre de entrenador: ${profileState.profile.name}",
+                        text = "Nombre de entrenador: ${trainerState.trainer.name}",
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "Lugar de nacimiento: ${profileState.profile.birthplace}",
+                        text = "Lugar de nacimiento: ${trainerState.trainer.birthplace}",
                         style = MaterialTheme.typography.bodySmall
                     )
                     Text(
-                        text = "Fecha de nacimiento: ${profileState.profile.birthdate.toFormattedString()}",
+                        text = "Fecha de nacimiento: ${trainerState.trainer.birthdate.toFormattedString()}",
                         style = MaterialTheme.typography.bodySmall
                     )
                     Button(
-                        onClick = { onClickEditProfile },
+                        onClick = { navController.navigate(AppScreens.EditTrainer.route) },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
                     ) {
@@ -151,9 +149,9 @@ fun MedalsCard(/*profileState: ProfileUiState, modifier: Modifier = Modifier*/){
 /*@Composable
 fun TeamCard(profileState: ProfileUiState, modifier: Modifier) {
 }*/
-
+/*
 @Preview("Mi perfil")
 @Composable
 fun ProfileScreenPreview(){
-    ProfileScreen()
-}
+    TrainerScreen()
+}*/

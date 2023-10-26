@@ -3,26 +3,24 @@ package com.example.pokeapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokeapp.data.repositories.ProfileRepository
-import com.example.pokeapp.utils.toProfile
+import com.example.pokeapp.data.repositories.TrainerRepository
+import com.example.pokeapp.utils.toTrainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class EditProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository): ViewModel() {
+class EditTrainerViewModel @Inject constructor(private val trainerRepository: TrainerRepository): ViewModel() {
 
-    private val _uiState = MutableStateFlow(EditProfileUiState())
+    private val _uiState = MutableStateFlow(EditTrainerUiState())
     val uiState = _uiState.asStateFlow()
 
     init{
-        getProfile()
+        getProfile() //Esto hay que cambiarlo
     }
 
     fun setName(name: String){
@@ -35,7 +33,7 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
         }
     }
 
-    fun setBirthdate(birthdate: LocalDateTime){
+    fun setBirthdate(birthdate: LocalDate){
             _uiState.update{ currentState ->
                 uiState.value.copy(
                     birthdate = birthdate
@@ -56,7 +54,7 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
     fun getProfile(){
         viewModelScope.launch{
             try{
-                profileRepository.getProfileById(1).collect{result ->
+                trainerRepository.getTrainerById(1).collect{result ->
                     _uiState.update{
                         uiState.value.copy(
                             name = result.name,
@@ -66,17 +64,17 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
                     }
                 }
             }catch (e: Exception){
-                Log.e(null, "Error getting profile --> $e")
+                Log.e(null, "Error getting trainer --> $e")
             }
         }
     }
 
-    fun saveProfile(editProfileUiState: EditProfileUiState){
+    fun saveProfile(editTrainerUiState: EditTrainerUiState){
         viewModelScope.launch{
             try{
-                profileRepository.updateProfile(editProfileUiState.toProfile())
+                trainerRepository.updateTrainer(editTrainerUiState.toTrainer())
             }catch(e: Exception) {
-                Log.e(null, "Error saving profile --> $e")
+                Log.e(null, "Error saving trainer --> $e")
             }
         }
     }
@@ -86,8 +84,8 @@ class EditProfileViewModel @Inject constructor(private val profileRepository: Pr
 
 
 
-data class EditProfileUiState(
+data class EditTrainerUiState(
     val name: String = "",
     val birthplace: String = "",
-    val birthdate: LocalDateTime = LocalDateTime.now().minusYears(18)
+    val birthdate: LocalDate = LocalDate.now().minusYears(18)
 )

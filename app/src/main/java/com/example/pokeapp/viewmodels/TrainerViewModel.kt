@@ -3,39 +3,39 @@ package com.example.pokeapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokeapp.data.models.Profile
-import com.example.pokeapp.data.repositories.ProfileRepository
+import com.example.pokeapp.data.models.Trainer
+import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val profileRepository: ProfileRepository): ViewModel(){
+class TrainerViewModel @Inject constructor(private val trainerRepository: TrainerRepository): ViewModel(){
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val _uiState = MutableStateFlow(TrainerUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        //getProfile() //Prepopulate database
+        getTrainer() //Esto hay que cambiarlo
     }
 
-    fun getProfile(){
+    fun getTrainer(){
 
         viewModelScope.launch{
             try{
-                profileRepository.getProfileById(1).collect{result ->
+                trainerRepository.getTrainerById(1).collect{result ->
                     _uiState.update{
                         uiState.value.copy(
-                            profile = result
+                            trainer = result
                         )
                     }
                 }
             }catch (e: Exception){
-                Log.e(null, "Error getting profile --> $e")
+                Log.e(null, "Error getting trainer --> $e")
             }
         }
 
@@ -43,8 +43,8 @@ class ProfileViewModel @Inject constructor(private val profileRepository: Profil
 }
 
 
-data class ProfileUiState(
-    val profile: Profile = Profile(1, "Rojo", LocalDateTime.now().minusYears(18), "Pueblo Paleta", true),
+data class TrainerUiState(
+    val trainer: Trainer = Trainer(1, "Rojo", LocalDate.now().minusYears(18), "Pueblo Paleta"),
     //val medals: List<Medal> = emptyList()
     //val pokemonTeam: List<Pokemon> = emptyList()
 )
