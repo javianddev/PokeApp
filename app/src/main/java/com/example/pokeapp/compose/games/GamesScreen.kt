@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,12 +35,15 @@ fun GamesScreen(navController: NavController, modifier: Modifier = Modifier){
         modifier = modifier.fillMaxWidth()
     ) {
         items(gameLinks) { game ->
-            Box(modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_medium))
-                .clickable { }
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                modifier = Modifier
+                    .clickable { navController.navigate(game.route) }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.padding_medium))
                 ) {
                     Text(stringResource(id = game.text))
                     Spacer(Modifier.weight(1f))
@@ -48,7 +54,6 @@ fun GamesScreen(navController: NavController, modifier: Modifier = Modifier){
                     )
                 }
             }
-            Divider()
         }
     }
 

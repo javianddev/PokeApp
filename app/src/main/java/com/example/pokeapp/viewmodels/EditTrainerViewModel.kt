@@ -25,28 +25,22 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
 
     fun setName(name: String){
         if (!name.isEmpty()){
-            _uiState.update{ currentState ->
-                uiState.value.copy(
-                    name = name
-                )
-            }
+           _uiState.update{
+               it.copy(name = name)
+           }
         }
     }
 
     fun setBirthdate(birthdate: LocalDate){
-            _uiState.update{ currentState ->
-                uiState.value.copy(
-                    birthdate = birthdate
-                )
-            }
+        _uiState.update{
+            it.copy(birthdate = birthdate)
+        }
     }
 
     fun setBirthplace(birthplace: String){
-        if (!birthplace.isEmpty()){
-            _uiState.update{ currentState ->
-                uiState.value.copy(
-                    birthplace = birthplace
-                )
+        if (!birthplace.isEmpty()) {
+            _uiState.update{
+                it.copy(birthplace = birthplace)
             }
         }
     }

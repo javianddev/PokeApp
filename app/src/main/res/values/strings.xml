@@ -18,7 +18,7 @@
     <string name="trainer">Mi perfil</string>
     <string name="home">Inicio</string>
     <string name="options">Opciones</string>
-    <string name="select_birthdate">Selecciona fecha de cumpleaños</string>
+    <string name="select_birthdate">Selecciona fecha de nacimiento</string>
     <string name="selected_birthdate">Fecha seleccionada</string>
     <string name="kanto_medals">Medallas de Kanto</string>
     <string name="johto_medals">Medallas de Johto</string>

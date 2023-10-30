@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.Flow
 interface TrainerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(profile: Trainer)
+    suspend fun insert(trainer: Trainer)
 
     @Update
-    suspend fun update(profile: Trainer)
+    suspend fun update(trainer: Trainer)
 
     @Delete
-    suspend fun delete(profile: Trainer)
+    suspend fun delete(trainer: Trainer)
 
     @Query("SELECT * FROM TRAINER WHERE ID = :id") //Es obvio que solo hay uno en esta app, pero por si amplío
     fun getTrainerById(id: Int): Flow<Trainer>
