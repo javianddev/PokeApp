@@ -7,6 +7,7 @@ import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -17,17 +18,18 @@ import javax.inject.Inject
 class TrainerViewModel @Inject constructor(private val trainerRepository: TrainerRepository): ViewModel(){
 
     private val _uiState = MutableStateFlow(TrainerUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState: StateFlow<TrainerUiState> = _uiState
+
 
     init {
-        getTrainer() //Esto hay que cambiarlo
+        getTrainer()
     }
 
     fun getTrainer(){
 
         viewModelScope.launch{
             try{
-                trainerRepository.getTrainerById(1).collect{result ->
+                trainerRepository.getTrainerById(1).collect{ result ->
                     _uiState.update{
                         uiState.value.copy(
                             trainer = result
@@ -35,7 +37,7 @@ class TrainerViewModel @Inject constructor(private val trainerRepository: Traine
                     }
                 }
             }catch (e: Exception){
-                Log.e(null, "Error getting trainer --> $e")
+                Log.e(null, "Error getting trainer TrainerViewModel --> $e")
             }
         }
 

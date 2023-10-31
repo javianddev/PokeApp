@@ -28,7 +28,6 @@ abstract class AppDatabase: RoomDatabase() {
                     "poke_db"
                 )
                     .createFromAsset("database/pokedb.db")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also{Instance = it}
             }

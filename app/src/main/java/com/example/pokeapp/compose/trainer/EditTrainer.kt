@@ -3,6 +3,10 @@ package com.example.pokeapp.compose.trainer
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
@@ -19,6 +23,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -119,7 +124,8 @@ fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = 
 
         /*******************DATEPICKER DIALOG INICIO************************/
 
-        var showDatePicker by remember {mutableStateOf(false)}
+        val interactionSource = remember { MutableInteractionSource() }
+        val showDatePicker: Boolean by interactionSource.collectIsFocusedAsState()
 
         val datePickerState = rememberDatePickerState(
             initialDisplayMode = DisplayMode.Input,
@@ -131,7 +137,7 @@ fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = 
             onValueChange = {datePickerState.selectedDateMillis?.let {
                 Instant.ofEpochMilli(it).atZone(
                     ZoneId.systemDefault()).toLocalDate()
-            }?.let { viewModel.setBirthdate(it) }},
+            }?.let { viewModel.setBirthdate(it) } },
             placeholder = { Text(text = stringResource(id = R.string.selected_birthdate))},
             shape =  RoundedCornerShape(dimensionResource(id = R.dimen.shape_medium)),
             leadingIcon = {
@@ -141,37 +147,50 @@ fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = 
                 )
             },
             readOnly = true,
-            modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.padding_medium))
-                .fillMaxWidth()
-                .clickable {
-                    showDatePicker = true
-                    focusManager.clearFocus()
-                },
+            interactionSource = interactionSource,
+            modifier = formModifier
         )
 
-
         if (showDatePicker){
-            DatePicker(
-                state = datePickerState,
-                showModeToggle = false,
-                title = {Text(stringResource(id = R.string.selected_birthdate))},
-                modifier = formModifier
-            )
+            DatePickerDialog(
+                onDismissRequest = {  },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
+                                .toLocalDate() }?.let { viewModel.setBirthdate(it) }
+                            focusManager.clearFocus()
+                        }
+                    ){
+                        Text("Aceptar")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            focusManager.clearFocus()
+                        }
+                    ){
+                        Text("Cancelar")
+                    }
+                }
+            ){
+                DatePicker(
+                    state = datePickerState,
+                    showModeToggle = false,
+                    title = { Text(text= stringResource(id = R.string.select_birthdate), style = MaterialTheme.typography.bodyLarge) },
+                    modifier = formModifier
+                )
+            }
         }
 
         /*******************DATEPICKER DIALOG FINAL*************************/
 
-
-
-
         Button(
+            enabled = viewModel.formNotBlank(),
             onClick = {
-                /*datePickerState.selectedDateMillis?.let {
-                    Instant.ofEpochMilli(it).atZone(
-                        ZoneId.systemDefault()).toLocalDate()
-                }?.let { viewModel.setBirthdate(it) }*/
-                viewModel.saveProfile(editTrainerState)
+                viewModel.saveTrainer(editTrainerState)
                 navController.popBackStack(AppScreens.TrainerScreen.route, inclusive = false)
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
