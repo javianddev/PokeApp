@@ -1,23 +1,28 @@
 package com.example.pokeapp.compose.navigation
 
+import android.app.Activity
+import android.content.pm.ActivityInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.pokeapp.compose.home.HomeScreen
 import com.example.pokeapp.compose.games.GamesScreen
-import com.example.pokeapp.compose.games.JohtoMedal
-import com.example.pokeapp.compose.games.KantoMedal
-import com.example.pokeapp.compose.games.HoennMedal
+import com.example.pokeapp.compose.games.TrivialScreen
 import com.example.pokeapp.compose.trainer.EditTrainer
 import com.example.pokeapp.compose.trainer.TrainerScreen
 
 @Composable
 fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifier){
+
+    val activity = LocalContext.current as Activity
 
     NavHost(
         navController = navController,
@@ -27,24 +32,22 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
     ){
 
         composable(AppScreens.HomeScreen.route){
-            HomeScreen() //Aquí ya iría un onClick para la navegación etc.
+            HomeScreen(navController = navController) //Aquí ya iría un onClick para la navegación etc.
         }
 
+        trainerNavGraph(navController = navController)
 
-        profileNavGraph(navController = navController)
-
-        gamesNavGraph(navController = navController)
-
+        gamesNavGraph(navController = navController, activity)
 
     }
 
 }
 
 
-fun NavGraphBuilder.profileNavGraph(navController: NavController){
+fun NavGraphBuilder.trainerNavGraph(navController: NavController){
     navigation(
         route = Graph.TRAINER.route,
-        startDestination = AppScreens.EditTrainer.route
+        startDestination = AppScreens.TrainerScreen.route
     ){
 
         composable(AppScreens.TrainerScreen.route){
@@ -57,26 +60,32 @@ fun NavGraphBuilder.profileNavGraph(navController: NavController){
     }
 }
 
-fun NavGraphBuilder.gamesNavGraph(navController: NavController){
+fun NavGraphBuilder.gamesNavGraph(navController: NavController, activity: Activity){
     navigation(
         route = Graph.GAMES.route,
         startDestination = AppScreens.GamesScreen.route
     ){
 
         composable(AppScreens.GamesScreen.route){
+            if (activity.requestedOrientation.equals(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)){
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
             GamesScreen(navController)
         }
 
-        composable(AppScreens.KantoMedal.route){
-            KantoMedal()
-        }
+        trivialNavGraph(navController, activity)
+    }
+}
 
-        composable(AppScreens.JohtoMedal.route){
-            JohtoMedal()
-        }
+fun NavGraphBuilder.trivialNavGraph(navController: NavController, activity: Activity){
+    navigation(
+        route = Graph.TRIVIAL.route,
+        startDestination = AppScreens.Trivial.route + "/{region_id}"
+    ){
 
-        composable(AppScreens.HoennMedal.route){
-            HoennMedal()
+        composable(AppScreens.Trivial.route + "/{region_id}", arguments = listOf(navArgument("region_id") { type = NavType.IntType})){
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            TrivialScreen()
         }
     }
 }

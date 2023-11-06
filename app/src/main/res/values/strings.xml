@@ -20,9 +20,10 @@
     <string name="options">Opciones</string>
     <string name="select_birthdate">Selecciona fecha de nacimiento</string>
     <string name="selected_birthdate">Fecha seleccionada</string>
-    <string name="kanto_medals">Medallas de Kanto</string>
-    <string name="johto_medals">Medallas de Johto</string>
-    <string name="hoenn_medals">Medallas de Hoenn</string>
+    <string name="medals">Medallas de </string>
+    <string name="trivial">Trivial</string>
+    <!--<string name="johto_medals">Medallas de Johto</string>
+    <string name="hoenn_medals">Medallas de Hoenn</string> -->
 
     <!--Acciones para botones -->
     <string name="arrow_back">Volver atrás</string>
@@ -32,6 +33,7 @@
     <string name="options_icon">Opciones</string>
     <string name="arrow_right">Siguiente</string>
     <string name="save_button">Guardar Datos</string>
+    <string name="next">Siguiente</string>
 
     <!--Mensajes -->
     <string name="saved_profile">¡Datos Guardados!</string>
