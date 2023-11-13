@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.repositories.RegionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -25,11 +26,11 @@ class GamesScreenViewModel @Inject constructor(private val regionRepository: Reg
 
     private fun getRegions(){
 
-        viewModelScope.launch{
+        viewModelScope.launch(Dispatchers.IO){
             try{
                 regionRepository.getAllRegion().collect { result ->
-                    _uiState.update{
-                        uiState.value.copy(
+                    _uiState.update{currentState ->
+                        currentState.copy(
                             regions = result
                         )
                     }

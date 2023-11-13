@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,11 +28,11 @@ class TrainerViewModel @Inject constructor(private val trainerRepository: Traine
 
     fun getTrainer(){
 
-        viewModelScope.launch{
+        viewModelScope.launch(Dispatchers.IO){
             try{
                 trainerRepository.getTrainerById(1).collect{ result ->
-                    _uiState.update{
-                        uiState.value.copy(
+                    _uiState.update{currentState ->
+                        currentState.copy(
                             trainer = result
                         )
                     }

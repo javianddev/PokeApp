@@ -21,8 +21,6 @@ sealed class AppScreens(
     data object GamesScreen: AppScreens("games", Icons.Filled.Extension, R.string.options_icon, R.string.options)
     data object EditTrainer: AppScreens("edit_trainer", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.edit_trainer) //Ruta secundaria de trainer
     data object Trivial: AppScreens("trivial", Icons.Filled.VideogameAsset, R.string.trivial, R.string.medals)
-    //data object JohtoMedal: AppScreens("johto", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.johto_medals) //Ruta secundaria de game
-    //data object HoennMedal: AppScreens("hoenn", Icons.Filled.Create, R.string.edit_trainer_icon, R.string.hoenn_medals) //Ruta secundaria de game
 
 }
 

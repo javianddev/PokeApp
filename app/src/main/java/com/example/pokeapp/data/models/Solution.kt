@@ -26,8 +26,14 @@ data class Solution(
     @ColumnInfo(name = "answer")
     val answer: String,
 
+   /* @NonNull Este campo hay que ponerlo sí o sí
+    @ColumnInfo(name="isCorrect")
+    val isCorrect: Int,*/
+
     @NonNull
-    @ColumnInfo(name = "question_id")
+    @ColumnInfo(name = "question_id", index = true)
     val question_id: Int
+
+
 
 )

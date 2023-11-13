@@ -2,7 +2,9 @@ package com.example.pokeapp.data.di
 
 import android.content.Context
 import com.example.pokeapp.data.AppDatabase
+import com.example.pokeapp.data.dao.QuestionDao
 import com.example.pokeapp.data.dao.RegionDao
+import com.example.pokeapp.data.dao.SolutionDao
 import com.example.pokeapp.data.dao.TrainerDao
 import dagger.Module
 import dagger.Provides
@@ -29,5 +31,15 @@ class DatabaseModule {
     @Provides
     fun provideRegionDao(appDatabase: AppDatabase): RegionDao {
         return appDatabase.regionDao()
+    }
+
+    @Provides
+    fun provideQuestionDao(appDatabase: AppDatabase): QuestionDao {
+        return appDatabase.questionDao()
+    }
+
+    @Provides
+    fun provideSolutionDao(appDatabase: AppDatabase): SolutionDao {
+        return appDatabase.solutionDao()
     }
 }

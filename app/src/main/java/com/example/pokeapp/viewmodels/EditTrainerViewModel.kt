@@ -8,6 +8,7 @@ import com.example.pokeapp.data.repositories.TrainerRepository
 import com.example.pokeapp.utils.toTrainer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,11 +52,11 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
     }
 
     fun getProfile() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 trainerRepository.getTrainerById(1).collect { result ->
-                    _uiState.update {
-                        uiState.value.copy(
+                    _uiState.update {currentState ->
+                        currentState.copy(
                             name = result.name,
                             birthplace = result.birthplace,
                             birthdate = result.birthdate
@@ -70,7 +71,7 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
     }
 
     fun saveTrainer(editTrainerUiState: EditTrainerUiState){
-        viewModelScope.launch{
+        viewModelScope.launch(Dispatchers.IO){
             try{
                 trainerRepository.updateTrainer(editTrainerUiState.toTrainer())
             }catch(e: Exception) {
