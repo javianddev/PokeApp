@@ -6,8 +6,8 @@ val initialMessages : List<String> = listOf(
 )
 
 val failMessages : List<String> = listOf(
-    "Parece que has fallado entrenador",
-    "Deberías de seguir preparándote en la Pokescuela, nos vemos en la próxima"
+    "Parece que aún no estás del todo preparado.",
+    "Deberías de seguir aprendiendo en la Pokescuela, nos vemos en la próxima"
 )
 
 val questionMessages: List<String> = listOf(

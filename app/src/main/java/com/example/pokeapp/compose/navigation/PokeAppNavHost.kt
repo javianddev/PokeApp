@@ -85,7 +85,7 @@ fun NavGraphBuilder.trivialNavGraph(navController: NavController, activity: Acti
 
         composable(AppScreens.Trivial.route + "/{region_id}", arguments = listOf(navArgument("region_id") { type = NavType.IntType})){
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            TrivialScreen()
+            TrivialScreen(navController = navController)
         }
     }
 }

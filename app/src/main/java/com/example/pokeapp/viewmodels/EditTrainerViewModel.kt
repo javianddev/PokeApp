@@ -52,7 +52,7 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
     }
 
     fun getProfile() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch{
             try {
                 trainerRepository.getTrainerById(1).collect { result ->
                     _uiState.update {currentState ->
@@ -71,7 +71,7 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
     }
 
     fun saveTrainer(editTrainerUiState: EditTrainerUiState){
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch{
             try{
                 trainerRepository.updateTrainer(editTrainerUiState.toTrainer())
             }catch(e: Exception) {

@@ -26,7 +26,7 @@ class GamesScreenViewModel @Inject constructor(private val regionRepository: Reg
 
     private fun getRegions(){
 
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch{
             try{
                 regionRepository.getAllRegion().collect { result ->
                     _uiState.update{currentState ->

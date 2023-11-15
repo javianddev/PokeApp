@@ -28,7 +28,7 @@ class TrainerViewModel @Inject constructor(private val trainerRepository: Traine
 
     fun getTrainer(){
 
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch{
             try{
                 trainerRepository.getTrainerById(1).collect{ result ->
                     _uiState.update{currentState ->

@@ -1,9 +1,11 @@
 package com.example.pokeapp.viewmodels
 
 import android.database.sqlite.SQLiteException
+import android.os.CountDownTimer
 import android.util.Log
-import androidx.compose.runtime.MutableState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,14 +14,13 @@ import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.data.repositories.QuestionRepository
 import com.example.pokeapp.data.repositories.SolutionRepository
+import com.example.pokeapp.ui.theme.md_theme_background
+import com.example.pokeapp.ui.theme.md_theme_error
+import com.example.pokeapp.ui.theme.md_theme_success
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,34 +38,27 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
     private val regionId = checkNotNull(savedStateHandle.get<Int>("region_id"))
 
     init {
+        _uiState.value = TrivialUiState()
         getTrivialData()
     }
 
-    //Esto no funciona del todo bien pero ya consigue las preguntas por lo menos
     private fun getTrivialData(){
         Log.d("TrivialData ", "gettingTrivialData...")
-         val trivialData= mutableListOf<Pair<Question, List<Solution>>>()
-         viewModelScope.launch(Dispatchers.IO){
+         viewModelScope.launch{
             try{
                questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
                     questions.map {
-                        for (it in questions) {
-                            solutionRepository.getSolutionsByQuestionId(it.id).collect { solutions ->
-                                _trivialData.add(Pair(it, solutions))
+                        for (question in questions) {
+                            solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
+                                _trivialData.add(Pair(question, solutions.shuffled()))
                             }
                         }
                     }
                 }
-
             } catch(e: SQLiteException){
                 Log.e("ErrorGettingData", "$e")
             }
         }
-        /*_uiState.update{currentState ->
-            currentState.copy(
-                trivialData = trivialData
-            )
-        }*/
     }
 
     fun updateCont(messages: List<String>){
@@ -76,7 +70,8 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                )
            }
            Log.i("UpdateCont", "Se reinicia el contador")
-       } else { //Actualizo el contador en todos los demás casos
+       } else if (_uiState.value.cont.plus(1) < messages.size) { //Actualizo el contador en todos los demás casos
+           Log.i("UpdateCont", "Se suma uno al contador en todos los casos --> ${_uiState.value.cont} - ${_uiState.value.status} - ${messages.size}")
            _uiState.update{currentState ->
                currentState.copy(
                    cont = currentState.cont.plus(1)
@@ -85,6 +80,53 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
            Log.i("UpdateCont", "Se suma uno al contador --> ${_uiState.value.cont}")
        }
     }
+
+    /*fun timer(isPaused: Boolean){
+        while (_uiState.value.timer > 0 && !isPaused){
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    timer = currentState.timer.minus(1)
+                )
+            }
+        }
+    }*/
+
+    fun userGuess(isCorrect: Boolean){
+        viewModelScope.launch{
+            if (isCorrect){
+                _uiState.update{currentState ->
+                    currentState.copy(
+                        buttonColor = md_theme_success,
+                        enabledButton = false
+                    )
+                }
+                delay(3000L)
+                _uiState.update{currentState ->
+                    currentState.copy(
+                        cont = currentState.cont.plus(1),
+                        buttonColor = md_theme_background,
+                        enabledButton = true
+                    )
+                }
+            } else {
+                _uiState.update{currentState ->
+                    currentState.copy(
+                        buttonColor = md_theme_error,
+                        enabledButton = false
+                    )
+                }
+                delay(3000L)
+                _uiState.update {currentState->
+                    currentState.copy(
+                        status = TrivialStatus.Fail,
+                        cont = 0
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -92,6 +134,8 @@ data class TrivialUiState(
 
     val cont: Int = 0,
     val status: TrivialStatus = TrivialStatus.Initial,
-    //Falta el contador de respuestas correctas.
+    //val timer: Int = 10, /*TODO Timer*/
+    val buttonColor: Color = md_theme_background,
+    val enabledButton: Boolean = true
 
 )
