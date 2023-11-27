@@ -13,21 +13,28 @@ import com.example.pokeapp.compose.utils.TrivialStatus
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.data.repositories.QuestionRepository
+import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.SolutionRepository
 import com.example.pokeapp.ui.theme.md_theme_background
 import com.example.pokeapp.ui.theme.md_theme_error
 import com.example.pokeapp.ui.theme.md_theme_success
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class TrivialViewModel @Inject constructor(private val questionRepository: QuestionRepository,
-                                           private val solutionRepository: SolutionRepository, savedStateHandle: SavedStateHandle): ViewModel(){
+                                           private val solutionRepository: SolutionRepository,
+                                           private val regionRepository: RegionRepository,
+                                           savedStateHandle: SavedStateHandle): ViewModel(){
 
     private val _uiState = MutableStateFlow(TrivialUiState())
     val uiState: StateFlow<TrivialUiState> = _uiState
@@ -47,14 +54,17 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
          viewModelScope.launch{
             try{
                questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
-                    questions.map {
-                        for (question in questions) {
-                            solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
-                                _trivialData.add(Pair(question, solutions.shuffled()))
+                  questions.map{
+                          question ->
+                                async{
+                                    solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
+                                        _trivialData.add(Pair(question, solutions.shuffled()))
+                                }
                             }
-                        }
+
+                        }.awaitAll()
                     }
-                }
+                _trivialData.shuffled()
             } catch(e: SQLiteException){
                 Log.e("ErrorGettingData", "$e")
             }
@@ -62,7 +72,7 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
     }
 
     fun updateCont(messages: List<String>){
-       if (_uiState.value.status == TrivialStatus.Initial && _uiState.value.cont.plus(1) == messages.size){ //Entrada a modo preguntas
+        if (_uiState.value.status == TrivialStatus.Initial && _uiState.value.cont.plus(1) == messages.size){ //Entrada a modo preguntas
            _uiState.update{currentState ->
                currentState.copy(
                    status = TrivialStatus.Question, //Pasamos a modo preguntas
@@ -102,12 +112,23 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                     )
                 }
                 delay(3000L)
-                _uiState.update{currentState ->
-                    currentState.copy(
-                        cont = currentState.cont.plus(1),
-                        buttonColor = md_theme_background,
-                        enabledButton = true
-                    )
+                if (_uiState.value.cont.plus(1) < trivialData.size) { //Acertamos y avanzamos
+                    _uiState.update{currentState ->
+                        currentState.copy(
+                            cont = currentState.cont.plus(1),
+                            buttonColor = md_theme_background,
+                            enabledButton = true
+                        )
+                    }
+                    //Y por supuesto, actualizamos la región, hemos conseguido las medallas
+                    regionRepository.updateRegionMedal(regionId, 1) /*TODO PONER EL 1 Y EL 0 EN UNA INTERFAZ*/
+                } else { //Llegamos a la última pregunta y la hemos acertado, hemos ganado el trivial
+                    _uiState.update{currentState ->
+                        currentState.copy(
+                            status = TrivialStatus.Win,
+                            cont = 0
+                        )
+                    }
                 }
             } else {
                 _uiState.update{currentState ->

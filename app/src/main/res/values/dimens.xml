@@ -12,4 +12,6 @@
     <dimen name="profile_image">200dp</dimen>
     <dimen name="medal_image">42dp</dimen>
     <dimen name="spacer100">100dp</dimen>
+    <dimen name="horizontal_space">4dp</dimen>
+    <dimen name="vertical_space">16dp</dimen>
 </resources>

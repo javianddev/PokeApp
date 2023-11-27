@@ -80,7 +80,7 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TrivialCardMessage(messages[trivial.value.cont]) { viewModel.updateCont(messages) } //La card de los mensajes va avanzando conforme le hacemos click
-                if (trivial.value.status == TrivialStatus.Fail && trivial.value.cont == messages.size.minus(1)){
+                if ((trivial.value.status == TrivialStatus.Fail || trivial.value.status == TrivialStatus.Win) && trivial.value.cont == messages.size.minus(1)){
                     Button(
                         onClick = { navController.popBackStack() },
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
@@ -175,7 +175,7 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess:(Boolean) -> Unit, b
             id = R.dimen.padding_medium
         ))
     ){
-        items(solutions) { solution ->
+        items(solutions, key = {solution -> solution.id}) { solution ->
             Button(
                 onClick = {
                     onUserGuess(solution.isCorrect)

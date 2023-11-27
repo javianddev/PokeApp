@@ -39,7 +39,7 @@ fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = h
     LazyColumn(
         modifier = modifier.fillMaxWidth()
     ) {
-        items(regionUiState.regions) { region ->
+        items(regionUiState.regions, key = {region -> region.id}) { region ->
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier

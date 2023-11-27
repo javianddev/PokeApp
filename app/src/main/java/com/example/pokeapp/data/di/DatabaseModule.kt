@@ -42,4 +42,5 @@ class DatabaseModule {
     fun provideSolutionDao(appDatabase: AppDatabase): SolutionDao {
         return appDatabase.solutionDao()
     }
+
 }

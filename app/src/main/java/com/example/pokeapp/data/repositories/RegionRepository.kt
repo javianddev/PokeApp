@@ -16,6 +16,8 @@ class RegionRepository @Inject constructor(private val regionDao: RegionDao){
 
     suspend fun updateRegion(region: Region) = regionDao.update(region)
 
+    fun updateRegionMedal(regionId: Int, achieved: Int) = regionDao.updateRegionMedal(regionId, achieved)
+
     suspend fun deleteRegion(region: Region) = regionDao.delete(region)
 
 }

@@ -12,6 +12,8 @@
     <string name="default_born_date">01-03-1997</string>
     <string name="default_medal_image">Imagen de medalla por defecto</string>
     <string name="default_trainer_image">Imagen de entrenador pokémon por defecto</string>
+    <string name="medal_locked">Medallas Bloqueadas</string>
+    <string name="medal_achieved">Medallas conseguidas</string>
 
     <!--Strings de opciones -->
     <string name="edit_trainer">Editar Perfil</string>

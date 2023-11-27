@@ -2,11 +2,15 @@ package com.example.pokeapp.compose.trainer
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -29,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
+import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.utils.toFormattedString
 import com.example.pokeapp.viewmodels.TrainerViewModel
 
@@ -91,7 +96,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
             style = MaterialTheme.typography.titleLarge
         )
 
-        MedalsCard(/*profileState, modifier = modifier*/)
+        MedalsCard(trainerState.regions, modifier = modifier)
 
         Text(
             text = "Equipo Pokémon",
@@ -103,7 +108,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
 }
 
 @Composable
-fun MedalsCard(/*profileState: ProfileUiState, modifier: Modifier = Modifier*/){
+fun MedalsCard(regions: List<Region>, modifier: Modifier = Modifier){
 
     val imageModifier = Modifier
         .padding(end = dimensionResource(id = R.dimen.padding_small))
@@ -115,32 +120,19 @@ fun MedalsCard(/*profileState: ProfileUiState, modifier: Modifier = Modifier*/){
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ){
-        Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))){
-            Text(
-                text = "Medallas de Kanto",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Row(modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))){
-                Image(
-                    painter = painterResource(id = R.drawable.medalla_mina),
-                    contentDescription = null,
-                    modifier = imageModifier
+        /*TODO*/
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space))){
+            items(regions, key = {region -> region.id}){region ->
+                Text(
+                    text = "Medallas de ${region.name}",
+                    style = MaterialTheme.typography.titleMedium
                 )
-                Image(
-                    painter = painterResource(id = R.drawable.medalla_faro),
-                    contentDescription = null,
-                    modifier = imageModifier
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.medalla_cienaga),
-                    contentDescription = null,
-                    modifier = imageModifier
-                )
+                /*LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
+                    items(){medal ->
+                        TODO HAY QUE PONER LAS MEDALLAS POR REGIÓN
+                    }
+                }*/
             }
-            Text(
-                text = "Medallas de Johto",
-                style = MaterialTheme.typography.titleMedium
-            )
         }
     }
 

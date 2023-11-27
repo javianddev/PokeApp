@@ -13,5 +13,9 @@ data class Region(
 
     @NonNull
     @ColumnInfo(name = "name")
-    val name: String
+    val name: String,
+
+    @NonNull
+    @ColumnInfo(name = "medalAchieved")
+    val medalAchieved: Boolean
 )

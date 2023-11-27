@@ -32,7 +32,7 @@ data class Solution(
 
     @NonNull
     @ColumnInfo(name = "question_id", index = true)
-    val question_id: Int
+    val questionId: Int
 
 
 

@@ -15,7 +15,7 @@ import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.data.models.Trainer
 
-@Database(entities = [Trainer::class, Region::class, Question::class, Solution::class], version = 4, exportSchema = false)
+@Database(entities = [Trainer::class, Region::class, Question::class, Solution::class], version = 5, exportSchema = false)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase: RoomDatabase() {
 

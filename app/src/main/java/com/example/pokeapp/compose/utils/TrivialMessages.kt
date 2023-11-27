@@ -2,7 +2,7 @@ package com.example.pokeapp.compose.utils
 
 val initialMessages : List<String> = listOf(
     "Bienvenido entrenador. Veo que estás preparado para un nuevo desafío.",
-    "Vamos a ver qué tal se te da. Cada respuesta correcta que consigas te dará una medalla. ¡Suerte!",
+    "Vamos a ver qué tal se te da. Si respondes correctamente a todas las preguntas conseguirás las medallas de la región. ¡Suerte!",
 )
 
 val failMessages : List<String> = listOf(
