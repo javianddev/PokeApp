@@ -9,13 +9,9 @@ import javax.inject.Singleton
 class TrainerRepository @Inject constructor(private val trainerDao: TrainerDao) {
 
     fun getAllTrainer() = trainerDao.getAllTrainers()
-
     fun getTrainerById(id: Int) = trainerDao.getTrainerById(id)
-
     suspend fun insertTrainer(trainer: Trainer) = trainerDao.insert(trainer)
-
     suspend fun updateTrainer(trainer: Trainer) = trainerDao.update(trainer)
-
     suspend fun deleteTrainer(trainer: Trainer) = trainerDao.delete(trainer)
 
 

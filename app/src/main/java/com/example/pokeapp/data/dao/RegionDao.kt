@@ -30,6 +30,4 @@ interface RegionDao {
     @Query("SELECT * FROM REGION WHERE id = :id")
     fun getRegionById(id: Int): Flow<Region>
 
-
-
 }

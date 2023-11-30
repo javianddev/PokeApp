@@ -2,6 +2,7 @@ package com.example.pokeapp.data.di
 
 import android.content.Context
 import com.example.pokeapp.data.AppDatabase
+import com.example.pokeapp.data.dao.MedalDao
 import com.example.pokeapp.data.dao.QuestionDao
 import com.example.pokeapp.data.dao.RegionDao
 import com.example.pokeapp.data.dao.SolutionDao
@@ -41,6 +42,11 @@ class DatabaseModule {
     @Provides
     fun provideSolutionDao(appDatabase: AppDatabase): SolutionDao {
         return appDatabase.solutionDao()
+    }
+
+    @Provides
+    fun provideMedalDao(appDatabase: AppDatabase): MedalDao {
+        return appDatabase.medalDao()
     }
 
 }

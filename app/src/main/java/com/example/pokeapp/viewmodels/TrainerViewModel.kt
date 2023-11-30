@@ -3,8 +3,10 @@ package com.example.pokeapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pokeapp.data.models.Medal
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Trainer
+import com.example.pokeapp.data.repositories.MedalRepositry
 import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainerViewModel @Inject constructor(
     private val trainerRepository: TrainerRepository,
-    private val regionRepository: RegionRepository
+    private val regionRepository: RegionRepository,
+    private val medalRepository: MedalRepositry
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow(TrainerUiState())
@@ -48,19 +51,26 @@ class TrainerViewModel @Inject constructor(
                             )
                         }
                     }
+                    medalRepository.getAllMedals().collect { result ->
+                        _uiState.update{currentState ->
+                            currentState.copy(
+                                medals = result /*TODO HAY QUE GUARDAR LOS IDENTIFICADORES EN BBDD*/
+                            )
+                        }
+                    }
                 }.await()
 
             }catch (e: Exception){
                 Log.e(null, "Error getting trainer TrainerViewModel --> $e")
             }
         }
-
     }
 }
 
 
 data class TrainerUiState(
     val trainer: Trainer = Trainer(1, "Rojo", LocalDate.now().minusYears(18), "Pueblo Paleta"),
-    val regions: List<Region> = emptyList()
+    val regions: List<Region> = emptyList(),
+    val medals: List<Medal> = emptyList()
     //val pokemonTeam: List<Pokemon> = emptyList()
 )

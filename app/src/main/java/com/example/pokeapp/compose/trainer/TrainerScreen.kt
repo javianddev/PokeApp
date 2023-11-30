@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
+import com.example.pokeapp.data.models.Medal
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.utils.toFormattedString
 import com.example.pokeapp.viewmodels.TrainerViewModel
@@ -96,7 +97,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
             style = MaterialTheme.typography.titleLarge
         )
 
-        MedalsCard(trainerState.regions, modifier = modifier)
+        MedalsCard(trainerState.regions, trainerState.medals, modifier = modifier)
 
         Text(
             text = "Equipo Pokémon",
@@ -108,7 +109,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
 }
 
 @Composable
-fun MedalsCard(regions: List<Region>, modifier: Modifier = Modifier){
+fun MedalsCard(regions: List<Region>, medals: List<Medal>, modifier: Modifier = Modifier){
 
     val imageModifier = Modifier
         .padding(end = dimensionResource(id = R.dimen.padding_small))
@@ -127,11 +128,15 @@ fun MedalsCard(regions: List<Region>, modifier: Modifier = Modifier){
                     text = "Medallas de ${region.name}",
                     style = MaterialTheme.typography.titleMedium
                 )
-                /*LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
-                    items(){medal ->
-                        TODO HAY QUE PONER LAS MEDALLAS POR REGIÓN
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
+                    items(medals.filter{ it.id == region.id}){medal ->
+                        Image( /*TODO Poner las medallas no conseguidas con el filtro en gris*/
+                            painter = painterResource(id = medal.image),
+                            contentDescription = medal.medalName,
+                            modifier = imageModifier
+                        )
                     }
-                }*/
+                }
             }
         }
     }

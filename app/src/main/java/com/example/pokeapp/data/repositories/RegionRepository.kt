@@ -9,15 +9,10 @@ import javax.inject.Singleton
 class RegionRepository @Inject constructor(private val regionDao: RegionDao){
 
     fun getAllRegion() = regionDao.getAllRegion()
-
     fun getRegionById(id: Int) = regionDao.getRegionById(id)
-
     suspend fun insertRegion(region: Region) = regionDao.insert(region)
-
     suspend fun updateRegion(region: Region) = regionDao.update(region)
-
     fun updateRegionMedal(regionId: Int, achieved: Int) = regionDao.updateRegionMedal(regionId, achieved)
-
     suspend fun deleteRegion(region: Region) = regionDao.delete(region)
 
 }

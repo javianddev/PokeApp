@@ -13,5 +13,5 @@ class QuestionRepository @Inject constructor(private val questionDao: QuestionDa
     fun getQuestionsByRegionId(regionId: Int) = questionDao.getQuestionsByRegionId(regionId)
     suspend fun insertQuestion(question:Question) = questionDao.insert(question)
     suspend fun updateQuestion(question: Question) = questionDao.update(question)
-    suspend fun deleteQestion(question: Question) = questionDao.delete(question)
+    suspend fun deleteQuestion(question: Question) = questionDao.delete(question)
 }
