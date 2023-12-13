@@ -36,6 +36,7 @@
     <string name="arrow_right">Siguiente</string>
     <string name="save_button">Guardar Datos</string>
     <string name="next">Siguiente</string>
+    <string name="locked">Bloqueado</string>
 
     <!--Mensajes -->
     <string name="saved_profile">¡Datos Guardados!</string>

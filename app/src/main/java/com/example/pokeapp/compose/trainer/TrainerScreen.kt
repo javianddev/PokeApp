@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -97,7 +101,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
             style = MaterialTheme.typography.titleLarge
         )
 
-        MedalsCard(trainerState.regions, trainerState.medals, modifier = modifier)
+        MedalsCard(trainerState.regionWMedal, /*trainerState.medals,*/ modifier = modifier)
 
         Text(
             text = "Equipo Pokémon",
@@ -109,7 +113,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
 }
 
 @Composable
-fun MedalsCard(regions: List<Region>, medals: List<Medal>, modifier: Modifier = Modifier){
+fun MedalsCard(regionWMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>,*/ modifier: Modifier = Modifier){
 
     val imageModifier = Modifier
         .padding(end = dimensionResource(id = R.dimen.padding_small))
@@ -121,24 +125,37 @@ fun MedalsCard(regions: List<Region>, medals: List<Medal>, modifier: Modifier = 
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ){
-        /*TODO*/
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space))){
-            items(regions, key = {region -> region.id}){region ->
+        /*TODO ARREGLAR ESTO QUE NO VA*/
+        /*LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space))){
+            items(regionWMedal){
                 Text(
-                    text = "Medallas de ${region.name}",
+                    text = "Medallas de ${it.first.name}",
                     style = MaterialTheme.typography.titleMedium
                 )
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
-                    items(medals.filter{ it.id == region.id}){medal ->
-                        Image( /*TODO Poner las medallas no conseguidas con el filtro en gris*/
+                    items(it.second){medal ->
+                        val filter =  if (it.first.medalAchieved){
+                            ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+                        }else{
+                            null
+                        }
+                        Image(
+                            painter = painterResource(id = medal),
+                            contentDescription = "Medalla conseguida",
+                            colorFilter = filter,
+                            modifier = imageModifier
+                        )
+                    }
+                    /*items(medals.filter{ it.id == region.id}){medal ->
+                        Image( /*TODO Si averigüo la mejor manera de enlazar los drawables con la BBDD*/
                             painter = painterResource(id = medal.image),
                             contentDescription = medal.medalName,
                             modifier = imageModifier
                         )
-                    }
+                    }*/
                 }
             }
-        }
+        }*/
     }
 
 }

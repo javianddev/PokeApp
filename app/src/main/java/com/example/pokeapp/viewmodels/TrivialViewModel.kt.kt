@@ -18,6 +18,7 @@ import com.example.pokeapp.data.repositories.SolutionRepository
 import com.example.pokeapp.ui.theme.md_theme_background
 import com.example.pokeapp.ui.theme.md_theme_error
 import com.example.pokeapp.ui.theme.md_theme_success
+import com.example.pokeapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -25,6 +26,8 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -51,22 +54,21 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
 
     private fun getTrivialData(){
         Log.d("TrivialData ", "gettingTrivialData...")
-         viewModelScope.launch{
+        viewModelScope.launch{
             try{
-               questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
-                  questions.map{
-                          question ->
-                                async{
-                                    solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
-                                        _trivialData.add(Pair(question, solutions.shuffled()))
-                                }
+                questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
+                    questions.map{
+                            question ->
+                        async{
+                            solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
+                                _trivialData.add(Pair(question, solutions.shuffled()))
                             }
+                        }
 
-                        }.awaitAll()
-                    }
-                _trivialData.shuffled()
+                    }.awaitAll()
+                }
             } catch(e: SQLiteException){
-                Log.e("ErrorGettingData", "$e")
+                Log.e("ErrorGettingData", "${e.message}")
             }
         }
     }
@@ -120,8 +122,6 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                             enabledButton = true
                         )
                     }
-                    //Y por supuesto, actualizamos la región, hemos conseguido las medallas
-                    regionRepository.updateRegionMedal(regionId, 1) /*TODO PONER EL 1 Y EL 0 EN UNA INTERFAZ*/
                 } else { //Llegamos a la última pregunta y la hemos acertado, hemos ganado el trivial
                     _uiState.update{currentState ->
                         currentState.copy(
@@ -129,6 +129,8 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                             cont = 0
                         )
                     }
+                    //Y por supuesto, actualizamos la región, hemos conseguido las medallas
+                    regionRepository.updateRegionMedal(regionId, Constants.TRUE) /*TODO PONER EL 1 Y EL 0 EN UNA INTERFAZ*/
                 }
             } else {
                 _uiState.update{currentState ->

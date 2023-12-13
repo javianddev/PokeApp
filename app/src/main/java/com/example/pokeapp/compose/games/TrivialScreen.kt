@@ -22,7 +22,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,21 +33,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pokeapp.R
+import com.example.pokeapp.compose.utils.TrivialMessages
 import com.example.pokeapp.compose.utils.TrivialStatus
 import com.example.pokeapp.compose.utils.TypeWriterText
-import com.example.pokeapp.compose.utils.failMessages
-import com.example.pokeapp.compose.utils.initialMessages
-import com.example.pokeapp.compose.utils.questionMessages
-import com.example.pokeapp.compose.utils.winnerMessages
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.viewmodels.TrivialViewModel
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -56,15 +50,15 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
 
     val trivial = viewModel.uiState.collectAsState()
 
-    val trivialData = viewModel.trivialData
+    val trivialData = viewModel.trivialData.shuffled()
 
-    var messages by remember {mutableStateOf(initialMessages)}
+    var messages by remember {mutableStateOf(TrivialMessages.initialMessages)}
 
     messages = when (trivial.value.status) {
-        is TrivialStatus.Initial -> initialMessages
-        is TrivialStatus.Question -> questionMessages
-        is TrivialStatus.Win -> winnerMessages
-        is TrivialStatus.Fail -> failMessages
+        is TrivialStatus.Initial -> TrivialMessages.initialMessages
+        is TrivialStatus.Question -> TrivialMessages.questionMessages
+        is TrivialStatus.Win -> TrivialMessages.winnerMessages
+        is TrivialStatus.Fail -> TrivialMessages.failMessages
     }
 
     Row(

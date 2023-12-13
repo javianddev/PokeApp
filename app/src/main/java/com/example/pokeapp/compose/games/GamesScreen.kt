@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -40,10 +41,16 @@ fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = h
         modifier = modifier.fillMaxWidth()
     ) {
         items(regionUiState.regions, key = {region -> region.id}) { region ->
+            val (icon, contentDescription) = when {
+                region.medalAchieved -> Icons.Filled.ArrowRight to R.string.next
+                else -> Icons.Filled.Lock to R.string.locked
+            }
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                modifier = Modifier
-                    .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }
+                modifier =
+                    Modifier
+                        .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }
+
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -53,8 +60,8 @@ fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = h
                     Text(stringResource(id = R.string.medals) + " ${region.name}")
                     Spacer(Modifier.weight(1f))
                     Icon(
-                        imageVector = Icons.Filled.ArrowRight,
-                        contentDescription = stringResource(id = R.string.arrow_right),
+                        imageVector = icon,
+                        contentDescription = stringResource(id = contentDescription),
                         modifier = Modifier.size(dimensionResource(id = R.dimen.icon_medium))
                     )
                 }

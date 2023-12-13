@@ -3,10 +3,10 @@ package com.example.pokeapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokeapp.data.models.Medal
+import com.example.pokeapp.compose.utils.MedalResources
+import com.example.pokeapp.compose.utils.RegionConstants
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Trainer
-import com.example.pokeapp.data.repositories.MedalRepositry
 import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,11 +18,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+
 @HiltViewModel
 class TrainerViewModel @Inject constructor(
     private val trainerRepository: TrainerRepository,
     private val regionRepository: RegionRepository,
-    private val medalRepository: MedalRepositry
+    //private val medalRepository: MedalRepositry
 ): ViewModel(){
 
     private val _uiState = MutableStateFlow(TrainerUiState())
@@ -33,7 +34,6 @@ class TrainerViewModel @Inject constructor(
     }
 
     private fun getTrainerData(){
-
         viewModelScope.launch{
             try{
                 async{
@@ -51,15 +51,21 @@ class TrainerViewModel @Inject constructor(
                             )
                         }
                     }
-                    medalRepository.getAllMedals().collect { result ->
+                    /*medalRepository.getAllMedals().collect { result ->
                         _uiState.update{currentState ->
                             currentState.copy(
-                                medals = result /*TODO HAY QUE GUARDAR LOS IDENTIFICADORES EN BBDD*/
+                                medals = result /*TODO HAY QUE AVERIGUAR UNA MANERA CORRECTA DE HACER REFERENCIA A LOS DRAWABLES EN BBDD*/
                             )
                         }
-                    }
+                    }*/
                 }.await()
-
+                for (region in _uiState.value.regions){
+                    when (region.id){
+                        RegionConstants.KANTO -> _uiState.value.regionWMedal.add(Pair(region, MedalResources.kantoMedals))
+                        RegionConstants.JOHTO -> _uiState.value.regionWMedal.add(Pair(region, MedalResources.johtoMedals))
+                        RegionConstants.HOENN -> _uiState.value.regionWMedal.add(Pair(region, MedalResources.hoennMedals))
+                    }
+                }
             }catch (e: Exception){
                 Log.e(null, "Error getting trainer TrainerViewModel --> $e")
             }
@@ -71,6 +77,7 @@ class TrainerViewModel @Inject constructor(
 data class TrainerUiState(
     val trainer: Trainer = Trainer(1, "Rojo", LocalDate.now().minusYears(18), "Pueblo Paleta"),
     val regions: List<Region> = emptyList(),
-    val medals: List<Medal> = emptyList()
+    val regionWMedal:MutableList<Pair<Region, List<Int>>> = mutableListOf()
+    //val medals: List<Medal> = emptyList() /*TODO HAY QUE AVERIGUAR UNA MANERA CORRECTA DE HACER REFERENCIA A LOS DRAWABLES EN BBDD*/
     //val pokemonTeam: List<Pokemon> = emptyList()
 )

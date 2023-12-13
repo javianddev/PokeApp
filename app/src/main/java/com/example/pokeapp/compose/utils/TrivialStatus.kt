@@ -2,9 +2,9 @@ package com.example.pokeapp.compose.utils
 
 sealed interface TrivialStatus{
 
-    object Initial: TrivialStatus
-    object Question: TrivialStatus
-    object Fail: TrivialStatus
-    object Win: TrivialStatus
+    data object Initial: TrivialStatus
+    data object Question: TrivialStatus
+    data object Fail: TrivialStatus
+    data object Win: TrivialStatus
 
 }
