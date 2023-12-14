@@ -26,9 +26,14 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -52,11 +57,11 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
         getTrivialData()
     }
 
-    private fun getTrivialData(){
+    private fun getTrivialData(){ /*TODO Desordenar _trivialData al final del todo*/
         Log.d("TrivialData ", "gettingTrivialData...")
         viewModelScope.launch{
             try{
-                questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
+               /*questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
                     questions.map{
                             question ->
                         async{
@@ -64,11 +69,19 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                                 _trivialData.add(Pair(question, solutions.shuffled()))
                             }
                         }
-
                     }.awaitAll()
+                }*/
+                val data: MutableList<Pair<Question, List<Solution>>> = mutableListOf()
+                val questions: List<Question> = questionRepository.getQuestionsByRegionId(regionId).first()
+                for (question in questions){
+                    val solutions: List<Solution> = solutionRepository.getSolutionsByQuestionId(question.id).first()
+                    data.add(Pair(question, solutions.shuffled()))
                 }
+                _trivialData.addAll(data.shuffled())
             } catch(e: SQLiteException){
                 Log.e("ErrorGettingData", "${e.message}")
+            } catch (e: NoSuchElementException){
+                Log.e("NoSuchElementException", "${e.message}")
             }
         }
     }
@@ -130,7 +143,10 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                         )
                     }
                     //Y por supuesto, actualizamos la región, hemos conseguido las medallas
-                    regionRepository.updateRegionMedal(regionId, Constants.TRUE) /*TODO PONER EL 1 Y EL 0 EN UNA INTERFAZ*/
+                    //Como estamos en el hilo principal, para la base de datos hay que usar el IO, así no se confunde y se bloquea
+                    withContext(Dispatchers.IO){
+                        regionRepository.updateRegionMedal(regionId, Constants.TRUE)
+                    }
                 }
             } else {
                 _uiState.update{currentState ->

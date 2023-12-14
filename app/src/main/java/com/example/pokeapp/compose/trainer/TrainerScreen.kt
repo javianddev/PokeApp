@@ -1,20 +1,17 @@
 package com.example.pokeapp.compose.trainer
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
-import com.example.pokeapp.data.models.Medal
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.utils.toFormattedString
 import com.example.pokeapp.viewmodels.TrainerViewModel
@@ -46,10 +42,10 @@ import com.example.pokeapp.viewmodels.TrainerViewModel
 fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = hiltViewModel(), navController: NavController){
 
     val trainerState by viewModel.uiState.collectAsState()
+    val regionMedal = viewModel.regionMedal
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.verticalScroll(rememberScrollState())
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(
             text = "Ficha de entrenador",
@@ -101,7 +97,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
             style = MaterialTheme.typography.titleLarge
         )
 
-        MedalsCard(trainerState.regionWMedal, /*trainerState.medals,*/ modifier = modifier)
+        MedalsCard(regionMedal, /*trainerState.medals,*/ modifier = modifier)
 
         Text(
             text = "Equipo Pokémon",
@@ -113,7 +109,9 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
 }
 
 @Composable
-fun MedalsCard(regionWMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>,*/ modifier: Modifier = Modifier){
+fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>,*/ modifier: Modifier = Modifier){
+
+    Log.i("medalsCard", "${regionMedal.toString()} - ${regionMedal.size}")
 
     val imageModifier = Modifier
         .padding(end = dimensionResource(id = R.dimen.padding_small))
@@ -125,20 +123,21 @@ fun MedalsCard(regionWMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ){
-        /*TODO ARREGLAR ESTO QUE NO VA*/
-        /*LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space))){
-            items(regionWMedal){
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space)), modifier = Modifier.padding(
+            dimensionResource(id = R.dimen.padding_small))){
+            items(regionMedal){
                 Text(
                     text = "Medallas de ${it.first.name}",
                     style = MaterialTheme.typography.titleMedium
                 )
+
+                val filter =  if (!it.first.medalAchieved){
+                    ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+                }else{
+                    null
+                }
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
                     items(it.second){medal ->
-                        val filter =  if (it.first.medalAchieved){
-                            ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
-                        }else{
-                            null
-                        }
                         Image(
                             painter = painterResource(id = medal),
                             contentDescription = "Medalla conseguida",
@@ -155,7 +154,7 @@ fun MedalsCard(regionWMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal
                     }*/
                 }
             }
-        }*/
+        }
     }
 
 }

@@ -48,13 +48,13 @@ import com.example.pokeapp.viewmodels.TrivialViewModel
 @Composable
 fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: NavController, modifier: Modifier = Modifier){
 
-    val trivial = viewModel.uiState.collectAsState()
+    val trivial by viewModel.uiState.collectAsState()
 
-    val trivialData = viewModel.trivialData.shuffled()
+    val trivialData = viewModel.trivialData
 
     var messages by remember {mutableStateOf(TrivialMessages.initialMessages)}
 
-    messages = when (trivial.value.status) {
+    messages = when (trivial.status) {
         is TrivialStatus.Initial -> TrivialMessages.initialMessages
         is TrivialStatus.Question -> TrivialMessages.questionMessages
         is TrivialStatus.Win -> TrivialMessages.winnerMessages
@@ -67,14 +67,14 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.padding_medium))
     ) {
-        OakImage(trivial.value.status) //La imagen cambia según el status que tenga el trivial
-        if (trivial.value.status != TrivialStatus.Question){
+        OakImage(trivial.status) //La imagen cambia según el status que tenga el trivial
+        if (trivial.status != TrivialStatus.Question){
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TrivialCardMessage(messages[trivial.value.cont]) { viewModel.updateCont(messages) } //La card de los mensajes va avanzando conforme le hacemos click
-                if ((trivial.value.status == TrivialStatus.Fail || trivial.value.status == TrivialStatus.Win) && trivial.value.cont == messages.size.minus(1)){
+                TrivialCardMessage(messages[trivial.cont]) { viewModel.updateCont(messages) } //La card de los mensajes va avanzando conforme le hacemos click
+                if ((trivial.status == TrivialStatus.Fail || trivial.status == TrivialStatus.Win) && trivial.cont == messages.size.minus(1)){
                     Button(
                         onClick = { navController.popBackStack() },
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
@@ -84,14 +84,14 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
                 }
             }
         }
-        if (trivial.value.status == TrivialStatus.Question){
+        if (trivial.status == TrivialStatus.Question){
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally)
             {
-                TrivialQuestion(questionData = trivialData[trivial.value.cont],)
+                TrivialQuestion(questionData = trivialData[trivial.cont],)
                 TrivialTimer()
-                TrivialSolutions(trivialData[trivial.value.cont].second, viewModel::userGuess, trivial.value.buttonColor, trivial.value.enabledButton)
+                TrivialSolutions(trivialData[trivial.cont].second, viewModel::userGuess, trivial.buttonColor, trivial.enabledButton)
             }
         }
     }
