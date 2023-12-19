@@ -20,7 +20,9 @@ import com.example.pokeapp.ui.theme.md_theme_error
 import com.example.pokeapp.ui.theme.md_theme_success
 import com.example.pokeapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
@@ -52,6 +54,8 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
 
     private val regionId = checkNotNull(savedStateHandle.get<Int>("region_id"))
 
+    private var timerJob: Job? = null
+
     init {
         _uiState.value = TrivialUiState()
         getTrivialData()
@@ -61,16 +65,6 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
         Log.d("TrivialData ", "gettingTrivialData...")
         viewModelScope.launch{
             try{
-               /*questionRepository.getQuestionsByRegionId(regionId).collect { questions ->
-                    questions.map{
-                            question ->
-                        async{
-                            solutionRepository.getSolutionsByQuestionId(question.id).collect { solutions ->
-                                _trivialData.add(Pair(question, solutions.shuffled()))
-                            }
-                        }
-                    }.awaitAll()
-                }*/
                 val data: MutableList<Pair<Question, List<Solution>>> = mutableListOf()
                 val questions: List<Question> = questionRepository.getQuestionsByRegionId(regionId).first()
                 for (question in questions){
@@ -106,24 +100,13 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
        }
     }
 
-    /*fun timer(isPaused: Boolean){
-        while (_uiState.value.timer > 0 && !isPaused){
-
-            _uiState.update { currentState ->
-                currentState.copy(
-                    timer = currentState.timer.minus(1)
-                )
-            }
-        }
-    }*/
-
-    fun userGuess(isCorrect: Boolean){
+    fun userGuess(isCorrect: Boolean, selectedIndex: Int){
         viewModelScope.launch{
             if (isCorrect){
                 _uiState.update{currentState ->
                     currentState.copy(
-                        buttonColor = md_theme_success,
-                        enabledButton = false
+                        enabledButton = false,
+                        pressedButton = selectedIndex
                     )
                 }
                 delay(3000L)
@@ -131,8 +114,8 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                     _uiState.update{currentState ->
                         currentState.copy(
                             cont = currentState.cont.plus(1),
-                            buttonColor = md_theme_background,
-                            enabledButton = true
+                            enabledButton = true,
+                            pressedButton = Constants.DEFAULT_TRIVIAL_BUTTON
                         )
                     }
                 } else { //Llegamos a la última pregunta y la hemos acertado, hemos ganado el trivial
@@ -148,21 +131,45 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                         regionRepository.updateRegionMedal(regionId, Constants.TRUE)
                     }
                 }
-            } else {
+            } else { //Nos hemos equivocado, mostramos los errores
                 _uiState.update{currentState ->
                     currentState.copy(
-                        buttonColor = md_theme_error,
-                        enabledButton = false
+                        enabledButton = false,
+                        pressedButton = selectedIndex
                     )
                 }
                 delay(3000L)
-                _uiState.update {currentState->
+                _uiState.update {currentState-> //Hemos fallado en el trivial, nos vamos a la pantalla de error y salimos del trivial
                     currentState.copy(
                         status = TrivialStatus.Fail,
                         cont = 0
                     )
                 }
             }
+        }
+    }
+
+    fun startTimer(){
+        timerJob?.cancel()
+
+        timerJob = CoroutineScope(Dispatchers.Default).launch{
+            while(_uiState.value.timeleft >= 0){
+                delay(1000)
+                _uiState.update{currentState ->
+                    currentState.copy(
+                        timeleft = _uiState.value.timeleft.minus(1)
+                    )
+                }
+            }
+        }
+    }
+
+    fun stopTimer(){
+        timerJob?.cancel()
+        _uiState.update{currentState ->
+            currentState.copy(
+                timeleft = 10
+            )
         }
     }
 
@@ -174,7 +181,8 @@ data class TrivialUiState(
     val cont: Int = 0,
     val status: TrivialStatus = TrivialStatus.Initial,
     //val timer: Int = 10, /*TODO Timer*/
-    val buttonColor: Color = md_theme_background,
-    val enabledButton: Boolean = true
+    val enabledButton: Boolean = true,
+    val pressedButton: Int = Constants.DEFAULT_TRIVIAL_BUTTON,
+    val timeleft: Int = 10
 
 )

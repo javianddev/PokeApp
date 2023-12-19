@@ -42,7 +42,10 @@ import com.example.pokeapp.compose.utils.TrivialStatus
 import com.example.pokeapp.compose.utils.TypeWriterText
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
+import com.example.pokeapp.ui.theme.md_theme_success
+import com.example.pokeapp.utils.Constants
 import com.example.pokeapp.viewmodels.TrivialViewModel
+import kotlin.reflect.KFunction2
 
 
 @Composable
@@ -54,9 +57,9 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
 
     var messages by remember {mutableStateOf(TrivialMessages.initialMessages)}
 
-    messages = when (trivial.status) {
+    messages = when (trivial.status) { /*TODO Esto también se puede pasar al viewModel perfectamente*/
         is TrivialStatus.Initial -> TrivialMessages.initialMessages
-        is TrivialStatus.Question -> TrivialMessages.questionMessages
+        is TrivialStatus.Question -> emptyList()
         is TrivialStatus.Win -> TrivialMessages.winnerMessages
         is TrivialStatus.Fail -> TrivialMessages.failMessages
     }
@@ -91,7 +94,7 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
             {
                 TrivialQuestion(questionData = trivialData[trivial.cont],)
                 TrivialTimer()
-                TrivialSolutions(trivialData[trivial.cont].second, viewModel::userGuess, trivial.buttonColor, trivial.enabledButton)
+                TrivialSolutions(trivialData[trivial.cont].second, viewModel::userGuess, trivial.pressedButton, trivial.enabledButton)
             }
         }
     }
@@ -100,7 +103,7 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
 @Composable
 fun OakImage(status: TrivialStatus){
 
-    var oakImage by remember {mutableStateOf(R.drawable.oak1)}
+    var oakImage by remember {mutableStateOf(R.drawable.oak1)} /* TODO Esto pasarlo al viewModel es que es nada */
 
     oakImage = when (status) {
         is TrivialStatus.Win -> R.drawable.oak2  //oak3
@@ -161,7 +164,7 @@ fun TrivialQuestion(questionData: Pair<Question, List<Solution>>) {
 }
 
 @Composable
-fun TrivialSolutions(solutions: List<Solution>, onUserGuess:(Boolean) -> Unit, buttonColor: Color, enabledButton: Boolean) {
+fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean, Int, Unit>, pressedButton: Int, enabledButton: Boolean) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -170,16 +173,33 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess:(Boolean) -> Unit, b
         ))
     ){
         items(solutions, key = {solution -> solution.id}) { solution ->
+
             Button(
                 onClick = {
-                    onUserGuess(solution.isCorrect)
+                    onUserGuess(solution.isCorrect, solution.id)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (solution.isCorrect) buttonColor else MaterialTheme.colorScheme.background,
-                    disabledContainerColor = if (solution.isCorrect) buttonColor else MaterialTheme.colorScheme.background,
+                    containerColor =
+                        if ((solution.isCorrect && pressedButton == solution.id) ||
+                            solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON)
+                            Color.Green
+                        else if (!solution.isCorrect && pressedButton == solution.id)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.background,
+                    disabledContainerColor =
+                        if ((solution.isCorrect && pressedButton == solution.id) ||
+                            solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON)
+                            Color.Green
+                        else if (!solution.isCorrect && pressedButton == solution.id)
+                            MaterialTheme.colorScheme.error
+                        else
+                            MaterialTheme.colorScheme.background,
                     contentColor = Color.Black /*TODO poner otro color*/
                 ),
-                elevation = ButtonDefaults.buttonElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = dimensionResource(id = R.dimen.default_card_elevation),
+                    disabledElevation  = dimensionResource(id = R.dimen.default_card_elevation)),
                 enabled = enabledButton,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
             )

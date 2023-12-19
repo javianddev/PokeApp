@@ -11,17 +11,6 @@ object TrivialMessages {
         "Deberías de seguir aprendiendo en la Pokescuela, nos vemos en la próxima"
     )
 
-    val questionMessages: List<String> = listOf(
-        "¡Correcto!",
-        "¡Vaya!, te lo voy a tener que poner más difícil",
-        "Con la siguiente seguro que te pillo por sorpresa",
-        "No estarás mirando por Internet, ¿verdad?",
-        "¡Es increíble!",
-        "¡Menudo pokemaníaco!",
-        "¡Creí que esta no la acertaría nadie!",
-        "¿Me quieres quitar el puesto de profesor o qué?"
-    )
-
     val winnerMessages: List<String> = listOf(
         "¡Felicidades!, has conseguido las medallas de la región",
         "A partir de ahora las podrás ver en tu perfil de entrenador",

@@ -111,8 +111,6 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
 @Composable
 fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>,*/ modifier: Modifier = Modifier){
 
-    Log.i("medalsCard", "${regionMedal.toString()} - ${regionMedal.size}")
-
     val imageModifier = Modifier
         .padding(end = dimensionResource(id = R.dimen.padding_small))
         .size(dimensionResource(id = R.dimen.medal_image))
