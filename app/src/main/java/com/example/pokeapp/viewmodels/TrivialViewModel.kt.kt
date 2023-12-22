@@ -1,41 +1,29 @@
 package com.example.pokeapp.viewmodels
 
 import android.database.sqlite.SQLiteException
-import android.os.CountDownTimer
 import android.util.Log
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pokeapp.R
+import com.example.pokeapp.compose.utils.TrivialMessages
 import com.example.pokeapp.compose.utils.TrivialStatus
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.data.repositories.QuestionRepository
 import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.SolutionRepository
-import com.example.pokeapp.ui.theme.md_theme_background
-import com.example.pokeapp.ui.theme.md_theme_error
-import com.example.pokeapp.ui.theme.md_theme_success
 import com.example.pokeapp.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -86,8 +74,11 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                currentState.copy(
                    status = TrivialStatus.Question, //Pasamos a modo preguntas
                    cont = 0, //Reiniciamos el contador
+                   messages = emptyList(), //Para este estado del trivial no hay mensajes
+                   oakImage = R.drawable.oak2
                )
            }
+            startTimer()
            Log.i("UpdateCont", "Se reinicia el contador")
        } else if (_uiState.value.cont.plus(1) < messages.size) { //Actualizo el contador en todos los demás casos
            Log.i("UpdateCont", "Se suma uno al contador en todos los casos --> ${_uiState.value.cont} - ${_uiState.value.status} - ${messages.size}")
@@ -109,22 +100,28 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                         pressedButton = selectedIndex
                     )
                 }
+                stopTimer()
                 delay(3000L)
                 if (_uiState.value.cont.plus(1) < trivialData.size) { //Acertamos y avanzamos
                     _uiState.update{currentState ->
                         currentState.copy(
                             cont = currentState.cont.plus(1),
                             enabledButton = true,
-                            pressedButton = Constants.DEFAULT_TRIVIAL_BUTTON
+                            pressedButton = Constants.DEFAULT_TRIVIAL_BUTTON,
+                            timeLeft = 10
                         )
                     }
+                    startTimer()
                 } else { //Llegamos a la última pregunta y la hemos acertado, hemos ganado el trivial
                     _uiState.update{currentState ->
                         currentState.copy(
                             status = TrivialStatus.Win,
-                            cont = 0
+                            cont = 0,
+                            messages = TrivialMessages.winnerMessages,
+                            //oakImage = ,
                         )
                     }
+                    stopTimer()
                     //Y por supuesto, actualizamos la región, hemos conseguido las medallas
                     //Como estamos en el hilo principal, para la base de datos hay que usar el IO, así no se confunde y se bloquea
                     withContext(Dispatchers.IO){
@@ -138,39 +135,53 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                         pressedButton = selectedIndex
                     )
                 }
+                stopTimer()
                 delay(3000L)
                 _uiState.update {currentState-> //Hemos fallado en el trivial, nos vamos a la pantalla de error y salimos del trivial
                     currentState.copy(
                         status = TrivialStatus.Fail,
-                        cont = 0
+                        cont = 0,
+                        messages = TrivialMessages.failMessages,
+                        //oakImage = ,
                     )
                 }
             }
         }
     }
 
-    fun startTimer(){
+    private fun startTimer(){
         timerJob?.cancel()
 
         timerJob = CoroutineScope(Dispatchers.Default).launch{
-            while(_uiState.value.timeleft >= 0){
+            while(_uiState.value.timeLeft > 0){
                 delay(1000)
                 _uiState.update{currentState ->
                     currentState.copy(
-                        timeleft = _uiState.value.timeleft.minus(1)
+                        timeLeft = _uiState.value.timeLeft.minus(1)
+                    )
+                }
+            }
+            if (_uiState.value.timeLeft == 0){
+                _uiState.update{currentState ->
+                    currentState.copy(
+                        enabledButton = false
+                    )
+                }
+                delay(3000)
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        status = TrivialStatus.Fail,
+                        cont = 0,
+                        //oakImage= ,
+                        messages = TrivialMessages.failMessages
                     )
                 }
             }
         }
     }
 
-    fun stopTimer(){
+    private fun stopTimer(){
         timerJob?.cancel()
-        _uiState.update{currentState ->
-            currentState.copy(
-                timeleft = 10
-            )
-        }
     }
 
 }
@@ -180,9 +191,10 @@ data class TrivialUiState(
 
     val cont: Int = 0,
     val status: TrivialStatus = TrivialStatus.Initial,
-    //val timer: Int = 10, /*TODO Timer*/
     val enabledButton: Boolean = true,
     val pressedButton: Int = Constants.DEFAULT_TRIVIAL_BUTTON,
-    val timeleft: Int = 10
+    val timeLeft: Int = 10,
+    val messages: List<String> = TrivialMessages.initialMessages,
+    val oakImage: Int = R.drawable.oak2
 
 )

@@ -33,36 +33,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pokeapp.R
-import com.example.pokeapp.compose.utils.TrivialMessages
 import com.example.pokeapp.compose.utils.TrivialStatus
 import com.example.pokeapp.compose.utils.TypeWriterText
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Solution
-import com.example.pokeapp.ui.theme.md_theme_success
 import com.example.pokeapp.utils.Constants
 import com.example.pokeapp.viewmodels.TrivialViewModel
 import kotlin.reflect.KFunction2
 
 
 @Composable
-fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: NavController, modifier: Modifier = Modifier){
+fun TrivialScreen(modifier: Modifier = Modifier, viewModel: TrivialViewModel = hiltViewModel(), navController: NavController){
 
     val trivial by viewModel.uiState.collectAsState()
 
     val trivialData = viewModel.trivialData
-
-    var messages by remember {mutableStateOf(TrivialMessages.initialMessages)}
-
-    messages = when (trivial.status) { /*TODO Esto también se puede pasar al viewModel perfectamente*/
-        is TrivialStatus.Initial -> TrivialMessages.initialMessages
-        is TrivialStatus.Question -> emptyList()
-        is TrivialStatus.Win -> TrivialMessages.winnerMessages
-        is TrivialStatus.Fail -> TrivialMessages.failMessages
-    }
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -70,14 +60,14 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
             .fillMaxSize()
             .padding(dimensionResource(id = R.dimen.padding_medium))
     ) {
-        OakImage(trivial.status) //La imagen cambia según el status que tenga el trivial
+        OakImage(trivial.oakImage) //La imagen cambia según el status que tenga el trivial
         if (trivial.status != TrivialStatus.Question){
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TrivialCardMessage(messages[trivial.cont]) { viewModel.updateCont(messages) } //La card de los mensajes va avanzando conforme le hacemos click
-                if ((trivial.status == TrivialStatus.Fail || trivial.status == TrivialStatus.Win) && trivial.cont == messages.size.minus(1)){
+                TrivialCardMessage(trivial.messages[trivial.cont]) { viewModel.updateCont(trivial.messages) } //La card de los mensajes va avanzando conforme le hacemos click
+                if ((trivial.status == TrivialStatus.Fail || trivial.status == TrivialStatus.Win) && trivial.cont == trivial.messages.size.minus(1)){
                     Button(
                         onClick = { navController.popBackStack() },
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
@@ -92,29 +82,20 @@ fun TrivialScreen(viewModel: TrivialViewModel = hiltViewModel(), navController: 
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally)
             {
-                TrivialQuestion(questionData = trivialData[trivial.cont],)
-                TrivialTimer()
-                TrivialSolutions(trivialData[trivial.cont].second, viewModel::userGuess, trivial.pressedButton, trivial.enabledButton)
+                TrivialQuestion(questionData = trivialData[trivial.cont])
+                TrivialTimer(trivial.timeLeft)
+                TrivialSolutions(trivialData[trivial.cont].second, viewModel::userGuess, trivial.pressedButton, trivial.enabledButton, trivial.timeLeft)
             }
         }
     }
 }
 
 @Composable
-fun OakImage(status: TrivialStatus){
-
-    var oakImage by remember {mutableStateOf(R.drawable.oak1)} /* TODO Esto pasarlo al viewModel es que es nada */
-
-    oakImage = when (status) {
-        is TrivialStatus.Win -> R.drawable.oak2  //oak3
-        is TrivialStatus.Initial -> R.drawable.oak2 //oak1
-        is TrivialStatus.Fail -> R.drawable.oak2
-        is TrivialStatus.Question -> R.drawable.oak2
-    }
+fun OakImage(oakImage: Int){
 
     Image(
         painter = painterResource(oakImage),
-        contentDescription = null, //decorativo
+        contentDescription = stringResource(id = R.string.oak), //decorativo
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .height(700.dp)
@@ -164,7 +145,7 @@ fun TrivialQuestion(questionData: Pair<Question, List<Solution>>) {
 }
 
 @Composable
-fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean, Int, Unit>, pressedButton: Int, enabledButton: Boolean) {
+fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean, Int, Unit>, pressedButton: Int, enabledButton: Boolean, timeLeft: Int) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -185,6 +166,8 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
                             Color.Green
                         else if (!solution.isCorrect && pressedButton == solution.id)
                             MaterialTheme.colorScheme.error
+                        else if (solution.isCorrect && timeLeft == 0)
+                            MaterialTheme.colorScheme.error
                         else
                             MaterialTheme.colorScheme.background,
                     disabledContainerColor =
@@ -193,9 +176,11 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
                             Color.Green
                         else if (!solution.isCorrect && pressedButton == solution.id)
                             MaterialTheme.colorScheme.error
+                        else if (solution.isCorrect && timeLeft == 0)
+                            MaterialTheme.colorScheme.error
                         else
                             MaterialTheme.colorScheme.background,
-                    contentColor = Color.Black /*TODO poner otro color*/
+                    contentColor = Color.Black
                 ),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = dimensionResource(id = R.dimen.default_card_elevation),
@@ -205,7 +190,7 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
             )
             {
                 Text(
-                    text = "${solution.answer}",
+                    text = solution.answer,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -214,10 +199,10 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
 }
 
 @Composable
-fun TrivialTimer(){
+fun TrivialTimer(timeLeft: Int){
 
     Text(
-        text = "xd", /*TODO*/
+        text = "$timeLeft",
         style = MaterialTheme.typography.titleMedium
     )
 }

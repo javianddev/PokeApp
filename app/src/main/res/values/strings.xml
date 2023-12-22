@@ -14,6 +14,8 @@
     <string name="default_trainer_image">Imagen de entrenador pokémon por defecto</string>
     <string name="medal_locked">Medallas Bloqueadas</string>
     <string name="medal_achieved">Medallas conseguidas</string>
+    <string name="region_medal">Región de</string>
+    <string name="trainer_info">Ficha de entrenador</string>
 
     <!--Strings de opciones -->
     <string name="edit_trainer">Editar Perfil</string>
@@ -40,4 +42,7 @@
 
     <!--Mensajes -->
     <string name="saved_profile">¡Datos Guardados!</string>
+
+    <!--ContentDescription -->
+    <string name="oak">El profesor Oak</string>
 </resources>

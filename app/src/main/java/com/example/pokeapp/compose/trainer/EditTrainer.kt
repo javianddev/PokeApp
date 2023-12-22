@@ -55,7 +55,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState") /*TODO Separar todo este código en funciones más pequeñas*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = hiltViewModel(), modifier: Modifier = Modifier,

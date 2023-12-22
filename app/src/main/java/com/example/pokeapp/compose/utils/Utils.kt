@@ -49,10 +49,4 @@ fun TypeWriterText(text: String, textStyle: TextStyle){
         text = displayText,
         style = textStyle,
     )
-        //Tengo que encontrar una manera de hacer que se muestre un iconito para indicar que hay que darle a siguiente
-       /* Icon(
-            imageVector = Icons.Filled.ArrowRight,
-            contentDescription = stringResource(id = R.string.next),
-            tint = Color.Black /*TODO Cambiar el color*/
-        )*/
 }

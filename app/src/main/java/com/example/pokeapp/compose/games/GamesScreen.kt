@@ -1,6 +1,5 @@
 package com.example.pokeapp.compose.games
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Lock
@@ -33,24 +32,32 @@ import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.viewmodels.GamesScreenViewModel
 
 @Composable
-fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = hiltViewModel(), modifier: Modifier = Modifier){
+fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = hiltViewModel(), modifier: Modifier = Modifier,){
 
-    val regionUiState by viewModel.uiState.collectAsState()
+    val gamesUiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = modifier.fillMaxWidth()
     ) {
-        items(regionUiState.regions, key = {region -> region.id}) { region ->
+        itemsIndexed(gamesUiState.regions) { index, region ->
+            //Esto no se puede hacer en el ViewModel
             val (icon, contentDescription) = when {
-                region.medalAchieved -> Icons.Filled.ArrowRight to R.string.next
-                else -> Icons.Filled.Lock to R.string.locked
+                index == 0 || gamesUiState.regions.getOrNull(index - 1)?.medalAchieved == true ->
+                    Icons.Filled.ArrowRight to R.string.next
+                else ->
+                    Icons.Filled.Lock to R.string.locked
             }
+
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier =
-                    Modifier
-                        .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }
-
+                //Dependiendo de si la región anterior está desbloqueada, podemos acceder a la actual (a no ser que sea la primera, que se accede siempre)
+                    if(index == 0 || gamesUiState.regions.getOrNull(index - 1)?.medalAchieved == true){
+                        Modifier
+                            .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }
+                    } else{
+                        Modifier
+                    }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -78,5 +85,5 @@ fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = h
 fun GamesScreenPreview(){
 
     val navController = rememberNavController()
-    GamesScreen(navController)
+    GamesScreen(navController = navController)
 }

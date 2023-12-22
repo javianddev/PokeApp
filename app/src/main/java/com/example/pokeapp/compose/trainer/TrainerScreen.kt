@@ -1,7 +1,6 @@
 package com.example.pokeapp.compose.trainer
 
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,77 +34,89 @@ import androidx.navigation.NavController
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.data.models.Region
+import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.utils.toFormattedString
 import com.example.pokeapp.viewmodels.TrainerViewModel
 
 @Composable
 fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = hiltViewModel(), navController: NavController){
 
-    val trainerState by viewModel.uiState.collectAsState()
+    val trainerState by viewModel.uiState.collectAsState() /*TODO Hay que conseguir que se actualice la información automáticamente al editar el perfil*/
     val regionMedal = viewModel.regionMedal
 
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(
-            text = "Ficha de entrenador",
-            style = MaterialTheme.typography.titleLarge
-        )
-        Card(
-            elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
-            modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_medium))
-        ){
-            Row(
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
-            ){
-                Image(
-                    painter = painterResource(id = R.drawable.pokemon_trainer),
-                    contentDescription = stringResource(id = R.string.default_trainer_image),
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(150.dp)
+    ) {
+        item {
+            TrainerInfo(trainerState.trainer, navController)
+        }
+
+        item {
+            MedalsCard(regionMedal, /*trainerState.medals,*/ modifier = modifier)
+        }
+
+        item {
+            Text(
+                text = "Equipo Pokémon",
+                style = MaterialTheme.typography.titleLarge
+            )
+            //TeamCard(profileState, modifier = modifier)
+        }
+
+    }
+}
+
+@Composable
+fun TrainerInfo(trainer: Trainer, navController: NavController){
+    Text(
+        text = stringResource(id = R.string.trainer_info),
+        style = MaterialTheme.typography.titleLarge
+    )
+    Card(
+        elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+        modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_medium))
+    ) {
+        Row(
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.pokemon_trainer),
+                contentDescription = stringResource(id = R.string.default_trainer_image),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(150.dp)
+            )
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Nombre de entrenador: ${trainer.name}",
+                    style = MaterialTheme.typography.bodySmall
                 )
-                Column(
-                    horizontalAlignment = Alignment.Start
-                ){
+                Text(
+                    text = "Lugar de nacimiento: ${trainer.birthplace}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "Fecha de nacimiento: ${trainer.birthdate.toFormattedString()}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Button(
+                    onClick = { navController.navigate(AppScreens.EditTrainer.route) },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
+                ) {
                     Text(
-                        text = "Nombre de entrenador: ${trainerState.trainer.name}",
-                        style = MaterialTheme.typography.bodySmall
+                        text = stringResource(id = R.string.edit_trainer),
+                        style = MaterialTheme.typography.labelSmall
                     )
-                    Text(
-                        text = "Lugar de nacimiento: ${trainerState.trainer.birthplace}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Text(
-                        text = "Fecha de nacimiento: ${trainerState.trainer.birthdate.toFormattedString()}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Button(
-                        onClick = { navController.navigate(AppScreens.EditTrainer.route) },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.edit_trainer),
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
                 }
             }
         }
-        Text(
-            text = "Medallas",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        MedalsCard(regionMedal, /*trainerState.medals,*/ modifier = modifier)
-
-        Text(
-            text = "Equipo Pokémon",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        //TeamCard(profileState, modifier = modifier)
     }
+    Text(
+        text = "Medallas",
+        style = MaterialTheme.typography.titleLarge
+    )
 }
 
 @Composable
@@ -121,11 +132,11 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ){
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space)), modifier = Modifier.padding(
+        Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.vertical_space)), modifier = Modifier.padding(
             dimensionResource(id = R.dimen.padding_small))){
-            items(regionMedal){
+            regionMedal.forEach{
                 Text(
-                    text = "Medallas de ${it.first.name}",
+                    text = "${stringResource(id = R.string.region_medal)} ${it.first.name}",
                     style = MaterialTheme.typography.titleMedium
                 )
 
@@ -134,11 +145,11 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
                 }else{
                     null
                 }
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
-                    items(it.second){medal ->
+                Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
+                    it.second.forEach{medal ->
                         Image(
                             painter = painterResource(id = medal),
-                            contentDescription = "Medalla conseguida",
+                            contentDescription = stringResource(id = R.string.medal_achieved),
                             colorFilter = filter,
                             modifier = imageModifier
                         )
