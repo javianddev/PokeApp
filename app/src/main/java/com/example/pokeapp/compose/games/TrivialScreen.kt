@@ -24,9 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -162,7 +160,7 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
                 colors = ButtonDefaults.buttonColors(
                     containerColor =
                         if ((solution.isCorrect && pressedButton == solution.id) ||
-                            solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON)
+                            (solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON))
                             Color.Green
                         else if (!solution.isCorrect && pressedButton == solution.id)
                             MaterialTheme.colorScheme.error
@@ -172,7 +170,7 @@ fun TrivialSolutions(solutions: List<Solution>, onUserGuess: KFunction2<Boolean,
                             MaterialTheme.colorScheme.background,
                     disabledContainerColor =
                         if ((solution.isCorrect && pressedButton == solution.id) ||
-                            solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON)
+                            (solution.isCorrect && pressedButton != solution.id && pressedButton != Constants.DEFAULT_TRIVIAL_BUTTON))
                             Color.Green
                         else if (!solution.isCorrect && pressedButton == solution.id)
                             MaterialTheme.colorScheme.error

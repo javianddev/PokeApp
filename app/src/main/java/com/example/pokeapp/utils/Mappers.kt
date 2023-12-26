@@ -1,6 +1,8 @@
 package com.example.pokeapp.utils
 
 import com.example.pokeapp.data.models.Trainer
+import com.example.pokeapp.remotedata.model.Pokemon
+import com.example.pokeapp.remotedata.model.PokemonResponse
 import com.example.pokeapp.viewmodels.EditTrainerUiState
 
 fun EditTrainerUiState.toTrainer(): Trainer = Trainer(
@@ -9,3 +11,9 @@ fun EditTrainerUiState.toTrainer(): Trainer = Trainer(
     birthdate = birthdate,
     birthplace = birthplace,
 )
+
+fun mapPokemonResToPokemon(pokemonResponse: PokemonResponse): List<Pokemon> {
+    return pokemonResponse.results.map{result ->
+        Pokemon(name= result.name)
+    }
+}

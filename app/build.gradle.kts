@@ -93,7 +93,8 @@ dependencies {
 
     //Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    //implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     //Kotlin serialization
@@ -104,6 +105,11 @@ dependencies {
 
     //Para poder usa java.time. Fuente: https://developer.android.com/studio/write/java8-support?hl=es-419
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+
+    //Paging 3, a ver si lo añadimos
+    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+
 
 }
 

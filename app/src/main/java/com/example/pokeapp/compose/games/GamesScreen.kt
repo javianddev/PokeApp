@@ -32,7 +32,7 @@ import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.viewmodels.GamesScreenViewModel
 
 @Composable
-fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = hiltViewModel(), modifier: Modifier = Modifier,){
+fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = hiltViewModel(), modifier: Modifier = Modifier){
 
     val gamesUiState by viewModel.uiState.collectAsState()
 

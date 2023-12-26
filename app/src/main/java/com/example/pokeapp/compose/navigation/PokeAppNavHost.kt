@@ -2,12 +2,10 @@ package com.example.pokeapp.compose.navigation
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.view.OrientationEventListener
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -73,6 +71,9 @@ fun NavGraphBuilder.gamesNavGraph(navController: NavController, activity: Activi
     ){
 
         composable(AppScreens.GamesScreen.route){
+            if (activity.requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
             GamesScreen(navController)
         }
 
@@ -84,16 +85,20 @@ fun NavGraphBuilder.trivialNavGraph(navController: NavController, activity: Acti
     navigation(
         route = Graph.TRIVIAL.route,
         startDestination = AppScreens.Trivial.route + "/{region_id}"
-    ){/*TODO A ESTO HAY QUE ECHARLE UN OJO*/
+    ){
 
         composable(AppScreens.Trivial.route + "/{region_id}", arguments = listOf(navArgument("region_id") { type = NavType.IntType})){
+            /*
+            Por si lo quiero hacer dinámico, aunque no me mola como funciona
             DisposableEffect(Unit) {
                 val orientationEventListener = object : OrientationEventListener(activity) {
                     override fun onOrientationChanged(orientation: Int) {
+                        /* Para cambiar la orientación controlando la posición del móvil
                         when (orientation) {
-                            in 0..225 -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+                            in 0..170 -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
                             else -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                        }
+                        }*/
+                        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                     }
                 }
 
@@ -103,7 +108,8 @@ fun NavGraphBuilder.trivialNavGraph(navController: NavController, activity: Acti
                     orientationEventListener.disable()
                     activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
-            }
+            }*/
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             TrivialScreen(navController = navController)
         }
     }
