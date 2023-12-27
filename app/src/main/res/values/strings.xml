@@ -39,6 +39,7 @@
     <string name="save_button">Guardar Datos</string>
     <string name="next">Siguiente</string>
     <string name="locked">Bloqueado</string>
+    <string name="reload">La Pokedex no ha logrado cargar los datos recolectados. Pulsa para reintentar</string>
 
     <!--Mensajes -->
     <string name="saved_profile">¡Datos Guardados!</string>

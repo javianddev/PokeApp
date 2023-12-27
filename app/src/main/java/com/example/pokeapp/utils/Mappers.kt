@@ -14,6 +14,15 @@ fun EditTrainerUiState.toTrainer(): Trainer = Trainer(
 
 fun mapPokemonResToPokemon(pokemonResponse: PokemonResponse): List<Pokemon> {
     return pokemonResponse.results.map{result ->
-        Pokemon(name= result.name)
+        val id = if(result.url.endsWith("/")) {
+            result.url.dropLast(1).takeLastWhile { it.isDigit() }
+        } else {
+            result.url.takeLastWhile { it.isDigit() }
+        }
+        Pokemon(
+            id = id,
+            name= result.name,
+            imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png", //En PokeApi, los sprites van con esta URL
+        )
     }
 }

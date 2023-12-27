@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.example.pokeapp.remotedata.model.Pokemon
 import com.example.pokeapp.remotedata.repositories.PokemonRepository
 import com.example.pokeapp.utils.mapPokemonResToPokemon
+import java.lang.Integer.min
 
 class PokemonPagingSource(private val pokemonRepository: PokemonRepository): PagingSource<Int, Pokemon>() {
 
@@ -16,24 +17,51 @@ class PokemonPagingSource(private val pokemonRepository: PokemonRepository): Pag
         }
     }
 
+    //Explicación de como funciona PAGING 3
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
        return try{
-           val pageNumber = params.key ?: 0 //Se carga la primera página si params.key es nulo, al avanzar carga las siguientes
-           val pageSize = 20 //20 pokemons únicamente
-           val offset = pageNumber * pageSize //Se cargarán 20 pokemons por página
+           //1.Obtenemos el número de página que se está cargando
+           val pageNumber = params.key ?: 0
+           //2. Establecemos cuantos elementos hay por página
+           val pageSize = 20
+           //3. Establecemos la cantidad máxima de pokemons
+           val totalPokemons = 151 // Cambia esto por la cantidad total de pokemons que tienes
 
-           val pokemons = mapPokemonResToPokemon(pokemonRepository.getPokemons(limit = pageSize, offset = offset))
+           if (pageNumber * pageSize >= totalPokemons) { //4. Ya no hay más elementos que cargar
+               return LoadResult.Error(NoSuchElementException("No hay más pokemons para cargar"))
+           }
 
+           //5. Calculamos todos los elementos ya cargados, es decir, son todos los elementos cargados en página anteriores
+           val offset = pageNumber * pageSize
+           //6. Vemos la cantidad de pokemons que quedan por cargar. Por ejemplo, si el offset es de 70, pues quedan 151 - 70
+           val remainingPokemons = totalPokemons - offset
+           //7. Calcula los pokemons que se cargarán en la página actual. Si el tamaño de la página es 20 y quedan 70, pues cargaremos otros 20, así hasta que queden 11.
+           val pokemonsToLoad = min(pageSize, remainingPokemons)
+
+           //8. Se hace la llamada con los datos conseguidos
+           val pokemons = mapPokemonResToPokemon(pokemonRepository.getPokemons(limit = pokemonsToLoad, offset = offset))
+
+           //9. Aumentamos el número de página
            val nextPage = pageNumber + 1
+
+           //10. Comprobamos que no se haya pasado de 151
            val nextKey = if (nextPage * pageSize >= 151) { //Al llegar a 151 paramos de conseguir más paginas
                null
            } else {
                nextPage //Cargamos la siguiente página
            }
 
+           //11. Comprobamos la anterior página
+           val prevKey = if (pageNumber > 0) {
+               pageNumber - 1
+           } else {
+               null
+           }
+
+           //12. Devolvemos los datos cargados, junto a los valores de la anterior y próxima página
            LoadResult.Page(
                data = pokemons,
-               prevKey = null,
+               prevKey = prevKey,
                nextKey = nextKey
            )
         }catch (e: Exception){
