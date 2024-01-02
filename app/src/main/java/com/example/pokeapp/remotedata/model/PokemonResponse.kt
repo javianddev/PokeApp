@@ -1,6 +1,5 @@
 package com.example.pokeapp.remotedata.model
 
-import kotlinx.serialization.Serializable
 
 data class PokemonResponse(
     val count: Int,

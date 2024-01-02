@@ -1,4 +1,4 @@
-package com.example.pokeapp.remotedata.model
+package com.example.pokeapp.data.models
 
 
 data class Pokemon(

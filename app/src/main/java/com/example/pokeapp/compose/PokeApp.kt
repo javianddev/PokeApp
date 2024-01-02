@@ -49,7 +49,12 @@ fun PokeApp(){
 
     val barState = rememberSaveable { (mutableStateOf(true)) }
 
-    barState.value = (currentRoute(navController) in barsScreens)
+    val currentRoute = currentRoute(navController)
+    if (currentRoute != null) {
+        barState.value = barsScreens.any { route ->
+            currentRoute.startsWith(route) || currentRoute.startsWith("$route/")
+        }
+    }
 
     val modifier = Modifier
         .fillMaxWidth()

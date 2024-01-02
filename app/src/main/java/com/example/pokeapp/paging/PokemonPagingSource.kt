@@ -2,7 +2,7 @@ package com.example.pokeapp.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.pokeapp.remotedata.model.Pokemon
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.remotedata.repositories.PokemonRepository
 import com.example.pokeapp.utils.mapPokemonResToPokemon
 import java.lang.Integer.min

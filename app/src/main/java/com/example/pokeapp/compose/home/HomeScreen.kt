@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -43,8 +44,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.pokeapp.R
-import com.example.pokeapp.remotedata.model.Pokemon
+import com.example.pokeapp.compose.navigation.AppScreens
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.viewmodels.HomeViewModel
+import java.util.Locale
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltViewModel(), modifier: Modifier = Modifier){
@@ -54,22 +57,21 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier.fillMaxSize()
-    ) { /*TODO Ahora mismo está el problema que consiste en que los marcadores de fallo o de Carga salen en la primera columna, esa fila hay que fusionarla
-                            Habría que mejorar también la UI del botón de fallo, hacerlo parecido al de la Play Store. Cuando realizamos la recarga de datos, nos manda al principio
+    ) { /*TODO Cuando realizamos la recarga de datos, nos manda al principio
                             de nuevo, habría que mirar eso también*/
         items(pokemons.itemCount){
             if (pokemons[it] != null) {
-                pokemons[it]?.let { it1 -> PokemonCard(it1) }
+                pokemons[it]?.let { it1 -> PokemonCard(it1, navController) }
             }
         }
         when (pokemons.loadState.append){
             is LoadState.NotLoading -> Unit
             LoadState.Loading ->
-                item{
+                item(span = { GridItemSpan(this.maxLineSpan) }){
                     LoadingPokemons()
                 }
             is LoadState.Error -> {
-                item {
+                item(span = { GridItemSpan(this.maxLineSpan) }) {
                     ErrorPokemons(pokemons) //Este sale cuando se ha cortado la carga a la mitad
                 }
             }
@@ -78,7 +80,8 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
         when (pokemons.loadState.refresh){
             is LoadState.NotLoading -> Unit
             LoadState.Loading ->
-                item{ //Este es el círculo que sale nada más entrar a la Aplicación, el que carga desde el principio
+                item(span = { GridItemSpan(this.maxLineSpan) }){ //Este es el círculo que sale nada más entrar a la Aplicación, el que carga desde el principio
+
                     Box(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -88,7 +91,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                     }
                 }
             is LoadState.Error -> {
-                item {
+                item(span = { GridItemSpan(this.maxLineSpan) }) {
                     ErrorPokemons(pokemons) //Este sale cuando no ha cargado desde el principio
                 }
             }
@@ -98,7 +101,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
 }
 
 @Composable
-fun PokemonCard(pokemon: Pokemon){
+fun PokemonCard(pokemon: Pokemon, navController: NavController){
 
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
@@ -106,6 +109,7 @@ fun PokemonCard(pokemon: Pokemon){
         modifier = Modifier
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .fillMaxWidth()
+            .clickable { navController.navigate(AppScreens.PokemonScreen.route + "/${pokemon.id}") }
     ){
         Column(
             verticalArrangement = Arrangement.SpaceAround,
@@ -125,7 +129,11 @@ fun PokemonCard(pokemon: Pokemon){
                     .size(120.dp)
             )
             Text(
-                text = "${pokemon.id}. ${pokemon.name}",
+                text = "${pokemon.id}. ${pokemon.name.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(
+                        Locale.ROOT
+                    ) else it.toString()
+                }}", //se podía utilizar capitalize(Locale.Root) pero está deprecated, porque queda más limpio...
                 style = MaterialTheme.typography.titleSmall
             )
         }

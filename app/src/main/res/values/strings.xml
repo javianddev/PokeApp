@@ -26,6 +26,7 @@
     <string name="selected_birthdate">Fecha seleccionada</string>
     <string name="medals">Medallas de </string>
     <string name="trivial">Trivial</string>
+    <string name="pokemon">Pokemon</string>
     <!--<string name="johto_medals">Medallas de Johto</string>
     <string name="hoenn_medals">Medallas de Hoenn</string> -->
 
@@ -40,6 +41,7 @@
     <string name="next">Siguiente</string>
     <string name="locked">Bloqueado</string>
     <string name="reload">La Pokedex no ha logrado cargar los datos recolectados. Pulsa para reintentar</string>
+    <string name="error_poke_info">Oops! Parece que la Pokédex ha tenido un error de conexión. Pulsa para reintentar</string>
 
     <!--Mensajes -->
     <string name="saved_profile">¡Datos Guardados!</string>

@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.example.pokeapp.compose.home.HomeScreen
 import com.example.pokeapp.compose.games.GamesScreen
 import com.example.pokeapp.compose.games.TrivialScreen
+import com.example.pokeapp.compose.home.PokemonScreen
 import com.example.pokeapp.compose.trainer.EditTrainer
 import com.example.pokeapp.compose.trainer.TrainerScreen
 
@@ -36,7 +37,12 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
         activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         composable(AppScreens.HomeScreen.route){
-            HomeScreen(navController = navController) //Aquí ya iría un onClick para la navegación etc.
+            HomeScreen(navController = navController)
+        }
+
+        /*TODO Meter en un NavGraph mejor*/
+        composable(AppScreens.PokemonScreen.route + "/{pokemon_id}", arguments = listOf(navArgument("pokemon_id") {type = NavType.IntType})){
+            PokemonScreen(navController = navController)
         }
 
         trainerNavGraph(navController = navController)

@@ -8,7 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.pokeapp.paging.PokemonPagingSource
-import com.example.pokeapp.remotedata.model.Pokemon
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.remotedata.repositories.PokemonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
