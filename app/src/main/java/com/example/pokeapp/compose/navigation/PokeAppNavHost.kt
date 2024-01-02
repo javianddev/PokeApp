@@ -40,10 +40,7 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
             HomeScreen(navController = navController)
         }
 
-        /*TODO Meter en un NavGraph mejor*/
-        composable(AppScreens.PokemonScreen.route + "/{pokemon_id}", arguments = listOf(navArgument("pokemon_id") {type = NavType.IntType})){
-            PokemonScreen(navController = navController)
-        }
+        pokemonNavGraph(navController = navController)
 
         trainerNavGraph(navController = navController)
 
@@ -53,6 +50,16 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
 
 }
 
+fun NavGraphBuilder.pokemonNavGraph(navController: NavController){
+    navigation(
+        route = Graph.POKEMON.route,
+        startDestination = AppScreens.PokemonScreen.route + "/{pokemon_id}"
+    ){
+        composable(AppScreens.PokemonScreen.route + "/{pokemon_id}", arguments = listOf(navArgument("pokemon_id") {type = NavType.IntType})){
+            PokemonScreen(navController = navController)
+        }
+    }
+}
 
 fun NavGraphBuilder.trainerNavGraph(navController: NavController){
     navigation(

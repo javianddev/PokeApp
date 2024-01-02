@@ -1,5 +1,6 @@
 package com.example.pokeapp.compose.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,13 +10,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Height
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,8 +42,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.pokeapp.viewmodels.PokemonUiState
-import com.example.pokeapp.viewmodels.PokemonViewModel
 import com.example.pokeapp.R
 import com.example.pokeapp.data.models.PokemonDetail
 import com.example.pokeapp.remotedata.model.Stat
@@ -47,10 +49,12 @@ import com.example.pokeapp.remotedata.model.StatX
 import com.example.pokeapp.remotedata.model.Type
 import com.example.pokeapp.remotedata.model.TypeX
 import com.example.pokeapp.utils.getColorType
+import com.example.pokeapp.viewmodels.PokemonUiState
+import com.example.pokeapp.viewmodels.PokemonViewModel
 import java.util.Locale
 
 /*TODO
-*  La imagen del pokemon se ve en toda la mitad, hacer como el del Pokemon Go mejor. Añadir las estadísticas*/
+*  Hacer las estadísticas. Poner una imagen dinámica de fondo según el tipo*/
 @Composable
 fun PokemonScreen(navController: NavController, viewModel: PokemonViewModel = hiltViewModel(), modifier: Modifier = Modifier){
 
@@ -59,7 +63,7 @@ fun PokemonScreen(navController: NavController, viewModel: PokemonViewModel = hi
     when (pokemonUiState){
         is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is PokemonUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
-        is PokemonUiState.Success -> PokemonInfoScreen(modifier = modifier.fillMaxSize(), pokemon = pokemonUiState.pokemon)
+        is PokemonUiState.Success -> PokemonInfoScreen(modifier = modifier.fillMaxWidth(), pokemon = pokemonUiState.pokemon)
     }
 
 }
@@ -67,7 +71,8 @@ fun PokemonScreen(navController: NavController, viewModel: PokemonViewModel = hi
 @Composable
 fun PokemonInfoScreen(pokemon: PokemonDetail, modifier: Modifier = Modifier){
 
-    Box(
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ){
         PokemonImage(pokemon.imageUrl, pokemon.name)
@@ -78,11 +83,19 @@ fun PokemonInfoScreen(pokemon: PokemonDetail, modifier: Modifier = Modifier){
 
 @Composable
 fun PokemonSimpleData(pokemon: PokemonDetail){
-    Box(
-        contentAlignment = Alignment.Center
+    Card(
+        elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        shape = RoundedCornerShape(
+            bottomStartPercent = 10,
+            bottomEndPercent = 10
+        )
     ){
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_medium))
         ){
             Text(
                 text ="#${pokemon.id} ${pokemon.name.replaceFirstChar {
@@ -180,11 +193,20 @@ fun PokemonTypes(types: List<Type>) {
 }
 
 @Composable
-fun PokemonImage(imageUrl: String, name: String,modifier: Modifier = Modifier){
+fun PokemonImage(imageUrl: String, name: String, modifier: Modifier = Modifier){
+
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_large))
+        modifier = Modifier
+            .fillMaxWidth()
     ){
+        Image(
+            painter = painterResource(id = R.drawable.bosque),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+        )
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
                 .data(imageUrl)
@@ -198,6 +220,7 @@ fun PokemonImage(imageUrl: String, name: String,modifier: Modifier = Modifier){
                 .size(200.dp)
         )
     }
+
 
 }
 
@@ -228,8 +251,7 @@ fun ErrorScreen(modifier: Modifier = Modifier){
     }
 }
 
-
-
+/* ------------------------ PREVIEWS ----------------------------*/
 
 @Preview(showBackground = true)
 @Composable
@@ -283,4 +305,10 @@ fun PokemonInfoPreview(){
         weight=69,
     )
     PokemonInfoScreen(pokemon, Modifier.fillMaxWidth())
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PokemonImagePreview(){
+    PokemonImage("a", "bulbasaur", Modifier)
 }
