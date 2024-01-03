@@ -49,7 +49,7 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
         getTrivialData()
     }
 
-    private fun getTrivialData(){ /*TODO Desordenar _trivialData al final del todo*/
+    private fun getTrivialData(){
         Log.d("TrivialData ", "gettingTrivialData...")
         viewModelScope.launch{
             try{

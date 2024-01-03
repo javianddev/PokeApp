@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,12 +13,16 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -24,10 +30,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -49,6 +57,8 @@ fun PokeApp(){
 
     val barState = rememberSaveable { (mutableStateOf(true)) }
 
+    val openDialog = rememberSaveable { (mutableStateOf(true)) } /*TODO ESTO NO VA*/
+
     val currentRoute = currentRoute(navController)
     if (currentRoute != null) {
         barState.value = barsScreens.any { route ->
@@ -59,29 +69,30 @@ fun PokeApp(){
     val modifier = Modifier
         .fillMaxWidth()
         .padding(
-            horizontal = dimensionResource(id = R.dimen.padding_medium),
-            vertical = dimensionResource(id = R.dimen.padding_small)
+            horizontal = dimensionResource(id = R.dimen.padding_medium)
         )
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
-            TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController, barState = barState)
+            TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController, barState = barState, openDialog)
          },
         bottomBar = {
             BottomPokeAppBar( navController = navController, barState = barState )
         },
     ){innerPadding ->
         PokeAppNavHost(navController, modifier = modifier.padding(innerPadding))
+        if (openDialog.value){
+            PokeHelp(openDialog)
+        }
     }
 
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, barState: MutableState<Boolean>){
+fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, barState: MutableState<Boolean>, openHelpDialog: MutableState<Boolean>){
 
     AnimatedVisibility(
         visible = barState.value,
@@ -103,6 +114,15 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHos
                                 tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { openHelpDialog }) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = stringResource(id = R.string.info),
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -140,7 +160,7 @@ fun BottomPokeAppBar(navController: NavHostController, barState: MutableState<Bo
                         },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
-                            navController.navigate(screen.route) {
+                            navController.navigate(screen.route) {//screen.route
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
@@ -153,6 +173,13 @@ fun BottomPokeAppBar(navController: NavHostController, barState: MutableState<Bo
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PokeHelp(openDialog: MutableState<Boolean>) {
+
+
 }
 
 /*

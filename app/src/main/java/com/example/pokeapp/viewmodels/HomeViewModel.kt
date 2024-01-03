@@ -37,9 +37,6 @@ class HomeViewModel @Inject constructor(private val pokemonRepository: PokemonRe
             }
         }
     }
-    fun refreshPokemons(){
-
-    }
 
 }
 

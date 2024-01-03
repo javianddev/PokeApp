@@ -48,4 +48,8 @@
 
     <!--ContentDescription -->
     <string name="oak">El profesor Oak</string>
+    <string name="info">Información</string>
+
+    <!-- Textos -->
+    <string name="stats">Estadísticas</string>
 </resources>

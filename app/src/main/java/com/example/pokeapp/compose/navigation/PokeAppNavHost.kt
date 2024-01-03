@@ -33,14 +33,18 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
         route = Graph.HOME.route,
         modifier = modifier
     ){
-
+/*TODO CUANDO INTENTO REGRESAR A INICIO CON EL BOTÓN INFERIOR, NO NAVEGA A APPSCREES.HOMESCREEN.ROUTE NO SE XQ, A PESAR DE SALIR CORRECTAMENTE EN EL DEBUG EL VALOR */
         activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         composable(AppScreens.HomeScreen.route){
             HomeScreen(navController = navController)
         }
 
-        pokemonNavGraph(navController = navController)
+        composable(AppScreens.PokemonScreen.route + "/{pokemon_id}", arguments = listOf(navArgument("pokemon_id") {type = NavType.IntType})){
+            PokemonScreen()
+        }
+
+        //pokemonNavGraph(navController = navController)
 
         trainerNavGraph(navController = navController)
 
@@ -50,13 +54,13 @@ fun PokeAppNavHost(navController: NavHostController, modifier: Modifier = Modifi
 
 }
 
-fun NavGraphBuilder.pokemonNavGraph(navController: NavController){
+fun NavGraphBuilder.pokemonNavGraph(navController: NavController){ /*TODO LO MISMO QUE EL TODO ANTERIOR*/
     navigation(
         route = Graph.POKEMON.route,
         startDestination = AppScreens.PokemonScreen.route + "/{pokemon_id}"
     ){
         composable(AppScreens.PokemonScreen.route + "/{pokemon_id}", arguments = listOf(navArgument("pokemon_id") {type = NavType.IntType})){
-            PokemonScreen(navController = navController)
+            PokemonScreen()
         }
     }
 }

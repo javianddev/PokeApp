@@ -20,8 +20,10 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -56,9 +58,11 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) { /*TODO Cuando realizamos la recarga de datos, nos manda al principio
-                            de nuevo, habría que mirar eso también*/
+                            de nuevo, habría que mirar eso también
+                            Según parece esto es un bug --> https://stackoverflow.com/questions/68611320/remember-lazycolumn-scroll-position-jetpack-compose/75084854#75084854*/
         items(pokemons.itemCount){
             if (pokemons[it] != null) {
                 pokemons[it]?.let { it1 -> PokemonCard(it1, navController) }
@@ -83,9 +87,10 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
                 item(span = { GridItemSpan(this.maxLineSpan) }){ //Este es el círculo que sale nada más entrar a la Aplicación, el que carga desde el principio
 
                     Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                            .fillMaxSize()
+                            .padding(dimensionResource(id = R.dimen.padding_medium))
                     ){
                         CircularProgressIndicator()
                     }
@@ -162,7 +167,7 @@ fun ErrorPokemons(pokemons: LazyPagingItems<Pokemon>) {
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
         modifier = Modifier
-            .padding(6.dp)
+            .padding(dimensionResource(id = R.dimen.padding_small))
             .fillMaxWidth()
             .wrapContentHeight()
     ) {

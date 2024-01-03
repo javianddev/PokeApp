@@ -1,6 +1,7 @@
 package com.example.pokeapp.compose.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.filled.Height
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +53,8 @@ import com.example.pokeapp.remotedata.model.Stat
 import com.example.pokeapp.remotedata.model.StatX
 import com.example.pokeapp.remotedata.model.Type
 import com.example.pokeapp.remotedata.model.TypeX
-import com.example.pokeapp.utils.getColorType
+import com.example.pokeapp.utils.getStatColor
+import com.example.pokeapp.utils.getTypeColor
 import com.example.pokeapp.viewmodels.PokemonUiState
 import com.example.pokeapp.viewmodels.PokemonViewModel
 import java.util.Locale
@@ -56,7 +62,7 @@ import java.util.Locale
 /*TODO
 *  Hacer las estadísticas. Poner una imagen dinámica de fondo según el tipo*/
 @Composable
-fun PokemonScreen(navController: NavController, viewModel: PokemonViewModel = hiltViewModel(), modifier: Modifier = Modifier){
+fun PokemonScreen(viewModel: PokemonViewModel = hiltViewModel(), modifier: Modifier = Modifier){
 
     val pokemonUiState = viewModel.pokemonUiState
 
@@ -74,21 +80,26 @@ fun PokemonInfoScreen(pokemon: PokemonDetail, modifier: Modifier = Modifier){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .verticalScroll(
+                state = rememberScrollState(),
+                enabled = true
+            )
+            .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ){
         PokemonImage(pokemon.imageUrl, pokemon.name)
-        PokemonSimpleData(pokemon)
+        PokemonData(pokemon)
     }
 
 }
 
 @Composable
-fun PokemonSimpleData(pokemon: PokemonDetail){
+fun PokemonData(pokemon: PokemonDetail){
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         shape = RoundedCornerShape(
-            bottomStartPercent = 10,
-            bottomEndPercent = 10
+            bottomStartPercent = 6,
+            bottomEndPercent = 6
         )
     ){
         Column(
@@ -108,7 +119,7 @@ fun PokemonSimpleData(pokemon: PokemonDetail){
 
             PokemonTypes(pokemon.types)
             PokemonFenotype(pokemon.height, pokemon.weight)
-            
+            PokemonStats(pokemon.stats)
         }
 
     }
@@ -175,7 +186,7 @@ fun PokemonTypes(types: List<Type>) {
                     .weight(1f)
                     .padding(horizontal = dimensionResource(id = R.dimen.padding_small))
                     .clip(CircleShape)
-                    .background(getColorType(type))
+                    .background(getTypeColor(type))
                     .height(35.dp)
             ) {
                 Text( text = type.type.name.replaceFirstChar {
@@ -222,6 +233,44 @@ fun PokemonImage(imageUrl: String, name: String, modifier: Modifier = Modifier){
     }
 
 
+}
+
+@Composable
+fun PokemonStats(stats: List<Stat>, modifier: Modifier = Modifier){
+
+    Column(
+        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))
+    ){
+        Text(
+            text = stringResource(id = R.string.stats),
+            style = MaterialTheme.typography.titleLarge
+        )
+        for (stat in stats){
+            PokemonBarStat(stat.baseStat, stat.stat)
+        }
+    }
+
+}
+
+@Composable
+fun PokemonBarStat(baseStat: Int, stat: StatX){
+    val progress = baseStat/100f
+
+
+    Text(
+        text = "${stat.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} - $baseStat",
+        style = MaterialTheme.typography.labelMedium,
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+    )
+
+    LinearProgressIndicator(
+        progress = progress,
+        color = getStatColor(baseStat),
+        strokeCap = StrokeCap.Round,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(12.dp)
+    )
 }
 
 @Composable

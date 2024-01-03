@@ -41,4 +41,5 @@ sealed class Graph(
     data object HOME: Graph("home_graph")
     data object TRIVIAL: Graph("trivial_graph")
     data object POKEMON: Graph("pokemon_graph")
+
 }

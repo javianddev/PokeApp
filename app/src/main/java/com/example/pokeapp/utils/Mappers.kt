@@ -8,6 +8,10 @@ import com.example.pokeapp.data.models.PokemonDetail
 import com.example.pokeapp.remotedata.model.PokemonInfo
 import com.example.pokeapp.remotedata.model.PokemonResponse
 import com.example.pokeapp.remotedata.model.Type
+import com.example.pokeapp.ui.theme.BadStat
+import com.example.pokeapp.ui.theme.MasterStat
+import com.example.pokeapp.ui.theme.MaxiStat
+import com.example.pokeapp.ui.theme.MegaStat
 import com.example.pokeapp.ui.theme.TypeBug
 import com.example.pokeapp.ui.theme.TypeDark
 import com.example.pokeapp.ui.theme.TypeDragon
@@ -26,6 +30,13 @@ import com.example.pokeapp.ui.theme.TypePsychic
 import com.example.pokeapp.ui.theme.TypeRock
 import com.example.pokeapp.ui.theme.TypeSteel
 import com.example.pokeapp.ui.theme.TypeWater
+import com.example.pokeapp.ui.theme.WorstStat
+import com.example.pokeapp.ui.theme.RegularStat
+import com.example.pokeapp.ui.theme.NormalStat
+import com.example.pokeapp.ui.theme.GoodStat
+import com.example.pokeapp.ui.theme.NiceStat
+import com.example.pokeapp.ui.theme.SuperStat
+import com.example.pokeapp.ui.theme.HiperStat
 import com.example.pokeapp.viewmodels.EditTrainerUiState
 
 fun EditTrainerUiState.toTrainer(): Trainer = Trainer(
@@ -60,7 +71,7 @@ fun PokemonInfo.toPokemonDetail(): PokemonDetail = PokemonDetail(
     weight = weight
 )
 
-fun getColorType(type: Type): Color {
+fun getTypeColor(type: Type): Color {
     return when(type.type.name) {
         "normal" -> TypeNormal
         "fire" -> TypeFire
@@ -81,5 +92,21 @@ fun getColorType(type: Type): Color {
         "steel" -> TypeSteel
         "fairy" -> TypeFairy
         else -> Color.Black
+    }
+}
+
+fun getStatColor(baseStat: Int):Color{
+    return when(baseStat){
+        in 0..59 -> WorstStat
+        in 60..79 -> BadStat
+        in 80 ..89 -> RegularStat
+        in 90..99 -> NormalStat
+        in 100..109 -> GoodStat
+        in 110..119 -> NiceStat
+        in 120..129 -> SuperStat
+        in 130..139 -> HiperStat
+        in 140..149 -> MegaStat
+        in 150..160 -> MaxiStat
+        else -> MasterStat
     }
 }
