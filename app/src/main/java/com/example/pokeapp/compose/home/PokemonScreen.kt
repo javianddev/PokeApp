@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.pokeapp.R
+import com.example.pokeapp.compose.utils.ErrorScreen
 import com.example.pokeapp.data.models.PokemonDetail
 import com.example.pokeapp.remotedata.model.Stat
 import com.example.pokeapp.remotedata.model.StatX
@@ -275,27 +276,6 @@ fun LoadingScreen(modifier: Modifier = Modifier){
 
 }
 
-@Composable
-fun ErrorScreen(modifier: Modifier = Modifier){
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(dimensionResource(id = R.dimen.padding_large))){
-        Icon(
-            imageVector = Icons.Filled.Error,
-            contentDescription = null, //Decorativo
-            modifier = Modifier.size(dimensionResource(id = R.dimen.icon_large))
-        )
-        Text(
-            text = stringResource(id = R.string.error_poke_info),
-            style = MaterialTheme.typography.labelLarge,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_medium))
-        )
-    }
-}
 
 /* ------------------------ PREVIEWS ----------------------------*/
 

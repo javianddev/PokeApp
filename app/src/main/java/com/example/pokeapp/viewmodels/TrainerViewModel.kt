@@ -1,7 +1,11 @@
 package com.example.pokeapp.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapp.compose.utils.MedalResources
@@ -12,24 +16,27 @@ import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.data.repositories.PokemonRepository
 import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.TrainerRepository
+import com.example.pokeapp.remotedata.model.PokemonEntry
+import com.example.pokeapp.remotedata.repositories.PokedexRepository
+import com.example.pokeapp.utils.mapPokemonResToPokemon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-
+import java.io.IOException
+import retrofit2.HttpException
+import java.util.Locale
 
 @HiltViewModel
 class TrainerViewModel @Inject constructor(
     private val trainerRepository: TrainerRepository,
     private val regionRepository: RegionRepository,
-    private val pokemonRepository: PokemonRepository
+    private val pokemonRepository: PokemonRepository,
+    private val pokedexRepository: PokedexRepository
     //private val medalRepository: MedalRepositry
 ): ViewModel(){
 
@@ -38,6 +45,14 @@ class TrainerViewModel @Inject constructor(
 
     private val _regionMedal = mutableStateListOf<Pair<Region, List<Int>>>()
     val regionMedal: List<Pair<Region, List<Int>>> = _regionMedal
+
+    private val _modalSheet = mutableStateOf(false)
+    val modalSheet: MutableState<Boolean> = _modalSheet
+
+    private val _searchBarState = mutableStateOf(SearchBarStateUi())
+    val searchBarState: MutableState<SearchBarStateUi> = _searchBarState
+    var pokedexUiState: PokedexUiState by mutableStateOf(PokedexUiState.Loading)
+        private set
 
     init {
         getTrainerData()
@@ -73,9 +88,32 @@ class TrainerViewModel @Inject constructor(
     }
     fun getPokedex(){
         viewModelScope.launch {
-            /*TODO HACER LA LLAMADA A LA API PARA LA SEARCHBAR*/
-
+            pokedexUiState = PokedexUiState.Loading
+            pokedexUiState = try {
+                PokedexUiState.Success(mapPokemonResToPokemon(pokedexRepository.getFullPokedex(151)))
+            } catch (e: IOException) {
+                PokedexUiState.Error
+            } catch (e: HttpException) {
+                PokedexUiState.Error
+            }
         }
+    }
+
+    fun openModalSheet(){
+        _modalSheet.value = true
+    }
+
+    fun closeModalSheet(){
+        _modalSheet.value = false
+    }
+
+    fun setQuery(query: String){
+        Log.d("TRAINERVIEWMODEL", "VALOR DE QUERY --> $query")
+        _searchBarState.value = _searchBarState.value.copy(query = query.lowercase())
+    }
+
+    fun setActive(active: Boolean){
+        _searchBarState.value = _searchBarState.value.copy(active = active)
     }
 }
 
@@ -86,3 +124,14 @@ data class TrainerUiState(
     //val medals: List<Medal> = emptyList() /*TODO HAY QUE AVERIGUAR UNA MANERA CORRECTA DE HACER REFERENCIA A LOS DRAWABLES EN BBDD*/
     val pokemonTeam: List<Pokemon> = emptyList()
 )
+
+data class SearchBarStateUi(
+    val active: Boolean = false,
+    val query: String = "",
+)
+
+sealed interface PokedexUiState {
+    data class Success(val pokemons: List<PokemonEntry>) : PokedexUiState
+    data object Error : PokedexUiState
+    data object Loading : PokedexUiState
+}

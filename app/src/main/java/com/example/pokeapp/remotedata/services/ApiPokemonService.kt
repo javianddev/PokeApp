@@ -14,4 +14,7 @@ interface ApiPokemonService {
     @GET("pokemon/{id}")
     suspend fun getPokemonInfo(@Path("id") id: Int): PokemonInfo
 
+    @GET("pokemon")
+    suspend fun getFullPokedex(@Query("limit") limit: Int): PokemonResponse
+
 }

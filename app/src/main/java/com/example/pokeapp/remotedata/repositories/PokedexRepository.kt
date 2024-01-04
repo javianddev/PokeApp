@@ -11,4 +11,6 @@ class PokedexRepository @Inject constructor(private val apiPokemonService: ApiPo
 
     suspend fun getPokemonInfo(id: Int) = apiPokemonService.getPokemonInfo(id)
 
+    suspend fun getFullPokedex(limit: Int) = apiPokemonService.getFullPokedex(limit)
+
 }

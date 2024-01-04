@@ -1,6 +1,5 @@
 package com.example.pokeapp.compose
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -66,7 +65,7 @@ fun PokeApp(){
             currentRoute.startsWith(route) || currentRoute.startsWith("$route/")
         }
     }
-    Log.i("PokeApp", "Valor para el modal --> $showSheet")
+
     val modifier = Modifier
         .fillMaxWidth()
         .padding(
