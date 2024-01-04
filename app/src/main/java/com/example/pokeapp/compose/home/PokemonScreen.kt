@@ -1,7 +1,6 @@
 package com.example.pokeapp.compose.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.pokeapp.R
@@ -58,15 +56,14 @@ import com.example.pokeapp.utils.getTypeColor
 import com.example.pokeapp.viewmodels.PokemonUiState
 import com.example.pokeapp.viewmodels.PokemonViewModel
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /*TODO
 *  Hacer las estadísticas. Poner una imagen dinámica de fondo según el tipo*/
 @Composable
 fun PokemonScreen(viewModel: PokemonViewModel = hiltViewModel(), modifier: Modifier = Modifier){
 
-    val pokemonUiState = viewModel.pokemonUiState
-
-    when (pokemonUiState){
+    when (val pokemonUiState = viewModel.pokemonUiState){
         is PokemonUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is PokemonUiState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
         is PokemonUiState.Success -> PokemonInfoScreen(modifier = modifier.fillMaxWidth(), pokemon = pokemonUiState.pokemon)
@@ -129,10 +126,10 @@ fun PokemonData(pokemon: PokemonDetail){
 fun PokemonFenotype(height: Int, weight: Int) {
 
     val weightToKgs = remember {
-        Math.round(weight * 100f) / 1000f
+        (weight * 100f).roundToInt() / 1000f
     }
     val heightToMeters = remember {
-        Math.round(height * 100f) / 1000f
+        (height * 100f).roundToInt() / 1000f
     }
 
     Row(
@@ -179,7 +176,7 @@ fun PokemonTypes(types: List<Type>) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
     ){
-        for (type in types){
+        types.forEach{ type ->
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -245,7 +242,7 @@ fun PokemonStats(stats: List<Stat>, modifier: Modifier = Modifier){
             text = stringResource(id = R.string.stats),
             style = MaterialTheme.typography.titleLarge
         )
-        for (stat in stats){
+        stats.forEach{ stat ->
             PokemonBarStat(stat.baseStat, stat.stat)
         }
     }

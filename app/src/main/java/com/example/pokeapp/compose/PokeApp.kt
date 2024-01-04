@@ -1,11 +1,12 @@
 package com.example.pokeapp.compose
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,28 +15,28 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -57,7 +58,7 @@ fun PokeApp(){
 
     val barState = rememberSaveable { (mutableStateOf(true)) }
 
-    val openDialog = rememberSaveable { (mutableStateOf(true)) } /*TODO ESTO NO VA*/
+    var showSheet by rememberSaveable { mutableStateOf(false) }
 
     val currentRoute = currentRoute(navController)
     if (currentRoute != null) {
@@ -65,7 +66,7 @@ fun PokeApp(){
             currentRoute.startsWith(route) || currentRoute.startsWith("$route/")
         }
     }
-
+    Log.i("PokeApp", "Valor para el modal --> $showSheet")
     val modifier = Modifier
         .fillMaxWidth()
         .padding(
@@ -76,15 +77,19 @@ fun PokeApp(){
 
     Scaffold(
         topBar = {
-            TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController, barState = barState, openDialog)
+            TopPokeAppBar( scrollBehavior = scrollBehavior, navController = navController, barState = barState){
+                showSheet = true
+            }
          },
         bottomBar = {
             BottomPokeAppBar( navController = navController, barState = barState )
         },
     ){innerPadding ->
         PokeAppNavHost(navController, modifier = modifier.padding(innerPadding))
-        if (openDialog.value){
-            PokeHelp(openDialog)
+        if (showSheet){
+            PokeHelp {
+                showSheet = false
+            }
         }
     }
 
@@ -92,7 +97,7 @@ fun PokeApp(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, barState: MutableState<Boolean>, openHelpDialog: MutableState<Boolean>){
+fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHostController, barState: MutableState<Boolean>, showSheet: () -> Unit){
 
     AnimatedVisibility(
         visible = barState.value,
@@ -117,7 +122,7 @@ fun TopPokeAppBar(scrollBehavior: TopAppBarScrollBehavior, navController: NavHos
                     }
                 },
                 actions = {
-                    IconButton(onClick = { openHelpDialog }) {
+                    IconButton(onClick = { showSheet() }) {
                         Icon(
                             imageVector = Icons.Filled.Info,
                             contentDescription = stringResource(id = R.string.info),
@@ -177,8 +182,34 @@ fun BottomPokeAppBar(navController: NavHostController, barState: MutableState<Bo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeHelp(openDialog: MutableState<Boolean>) {
+fun PokeHelp(openBottomSheet: () -> Unit) {
 
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = { openBottomSheet() },
+        sheetState = modalBottomSheetState,
+        dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+        val textModifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small))
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(dimensionResource(id = R.dimen.padding_medium))
+        ){
+            Text(text = "Acerca de PokeApp", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(
+                bottom = dimensionResource(id = R.dimen.padding_medium)))
+            Text("En esta aplicación puedes consultar los pokémons de la región de Kanto a modo de Pokédex. " +
+                    "Podrás ver datos como sus estadísticas, peso o altura.", style = MaterialTheme.typography.labelMedium, modifier = textModifier)
+            Text("Tienes una ficha de entrenador que puedes editar. En ella encontrarás tus datos, medallas conseguidas " +
+                "y equipo pokémon favorito. ", style = MaterialTheme.typography.labelMedium, modifier = textModifier)
+            Text( "También podrás jugar a un trivial. Empezarás en la región de Kanto y a medida que vayas completándolos se irán " +
+                    "desbloqueando los siguientes. Cuando ganes uno, las medallas de esa región de tu ficha de entrenador se desbloquearán. ",
+                style = MaterialTheme.typography.labelMedium, modifier = textModifier)
+            Text("Esta aplicación ha sido creada utilizando Kotlin, Jetpack Compose, Room y con la ayuda de PokeApi por Fco Javier Giráldez Delgado.",
+                style = MaterialTheme.typography.labelMedium, modifier = textModifier)
+        }
+    }
 
 }
 

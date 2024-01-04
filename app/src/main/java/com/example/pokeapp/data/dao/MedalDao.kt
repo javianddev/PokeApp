@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.pokeapp.data.models.Medal
-import com.example.pokeapp.data.models.Question
 import kotlinx.coroutines.flow.Flow
 
 @Dao

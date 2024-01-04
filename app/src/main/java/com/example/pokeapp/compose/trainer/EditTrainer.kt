@@ -2,12 +2,8 @@ package com.example.pokeapp.compose.trainer
 
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
@@ -35,13 +31,10 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -60,7 +53,6 @@ import java.time.ZoneId
 
 
 @SuppressLint("UnrememberedMutableState")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = hiltViewModel(), modifier: Modifier = Modifier,
 ) {

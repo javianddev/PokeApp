@@ -7,17 +7,19 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.pokeapp.data.converters.DateConverter
 import com.example.pokeapp.data.dao.MedalDao
+import com.example.pokeapp.data.dao.PokemonDao
 import com.example.pokeapp.data.dao.QuestionDao
 import com.example.pokeapp.data.dao.RegionDao
 import com.example.pokeapp.data.dao.SolutionDao
 import com.example.pokeapp.data.dao.TrainerDao
 import com.example.pokeapp.data.models.Medal
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.data.models.Question
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Solution
 import com.example.pokeapp.data.models.Trainer
 
-@Database(entities = [Trainer::class, Region::class, Question::class, Solution::class, Medal::class], version = 6, exportSchema = false)
+@Database(entities = [Trainer::class, Region::class, Question::class, Solution::class, Medal::class, Pokemon::class], version = 7, exportSchema = false)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase: RoomDatabase() {
 
@@ -26,6 +28,7 @@ abstract class AppDatabase: RoomDatabase() {
     abstract fun questionDao(): QuestionDao
     abstract fun solutionDao(): SolutionDao
     abstract fun medalDao(): MedalDao
+    abstract fun pokemonDao(): PokemonDao
 
     companion object {
 

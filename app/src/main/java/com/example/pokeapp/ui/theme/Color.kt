@@ -6,7 +6,7 @@ val md_theme_light_primary = Color(0xffff0000)
 val md_theme_light_onPrimary = Color(0xfff5f5f5)
 val md_theme_background = Color(0xfff5f5f5)
 val md_theme_error = Color(0xffff0000)
-val md_theme_success = Color(0xff00ff00)
+
 
 
 val WorstStat = Color(255,0,0)

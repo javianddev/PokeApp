@@ -2,9 +2,7 @@ package com.example.pokeapp.compose.navigation
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
-import android.view.OrientationEventListener
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController

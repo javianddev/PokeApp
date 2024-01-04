@@ -20,10 +20,8 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,6 +46,7 @@ import coil.request.ImageRequest
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.data.models.Pokemon
+import com.example.pokeapp.remotedata.model.PokemonEntry
 import com.example.pokeapp.viewmodels.HomeViewModel
 import java.util.Locale
 
@@ -62,7 +61,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
             .fillMaxSize()
     ) { /*TODO Cuando realizamos la recarga de datos, nos manda al principio
                             de nuevo, habría que mirar eso también
-                            Según parece esto es un bug --> https://stackoverflow.com/questions/68611320/remember-lazycolumn-scroll-position-jetpack-compose/75084854#75084854*/
+                            Según parece esto es un bug, debería de hacerlo solo --> https://stackoverflow.com/questions/68611320/remember-lazycolumn-scroll-position-jetpack-compose/75084854#75084854*/
         items(pokemons.itemCount){
             if (pokemons[it] != null) {
                 pokemons[it]?.let { it1 -> PokemonCard(it1, navController) }
@@ -106,7 +105,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
 }
 
 @Composable
-fun PokemonCard(pokemon: Pokemon, navController: NavController){
+fun PokemonCard(pokemon: PokemonEntry, navController: NavController){
 
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
@@ -163,7 +162,7 @@ fun LoadingPokemons(){
 }
 
 @Composable
-fun ErrorPokemons(pokemons: LazyPagingItems<Pokemon>) {
+fun ErrorPokemons(pokemons: LazyPagingItems<PokemonEntry>) {
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
         modifier = Modifier

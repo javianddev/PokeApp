@@ -2,14 +2,14 @@ package com.example.pokeapp.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.pokeapp.data.models.Pokemon
-import com.example.pokeapp.remotedata.repositories.PokemonRepository
+import com.example.pokeapp.remotedata.model.PokemonEntry
+import com.example.pokeapp.remotedata.repositories.PokedexRepository
 import com.example.pokeapp.utils.mapPokemonResToPokemon
 import java.lang.Integer.min
 
-class PokemonPagingSource(private val pokemonRepository: PokemonRepository): PagingSource<Int, Pokemon>() {
+class PokemonPagingSource(private val pokedexRepository: PokedexRepository): PagingSource<Int, PokemonEntry>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, PokemonEntry>): Int? {
         return state.anchorPosition?.let {position ->
             val page = state.closestPageToPosition(position)
             page?.prevKey?.minus(1) ?: page?.nextKey?.plus(1) ?: position
@@ -18,7 +18,7 @@ class PokemonPagingSource(private val pokemonRepository: PokemonRepository): Pag
     }
 
     //Explicación de como funciona PAGING 3
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PokemonEntry> {
        return try{
            //1.Obtenemos el número de página que se está cargando
            val pageNumber = params.key ?: 0
@@ -39,7 +39,7 @@ class PokemonPagingSource(private val pokemonRepository: PokemonRepository): Pag
            val pokemonsToLoad = min(pageSize, remainingPokemons)
 
            //8. Se hace la llamada con los datos conseguidos
-           val pokemons = mapPokemonResToPokemon(pokemonRepository.getPokemons(limit = pokemonsToLoad, offset = offset))
+           val pokemons = mapPokemonResToPokemon(pokedexRepository.getPokemons(limit = pokemonsToLoad, offset = offset))
 
            //9. Aumentamos el número de página
            val nextPage = pageNumber + 1

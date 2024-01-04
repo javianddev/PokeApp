@@ -5,16 +5,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,17 +26,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.utils.toFormattedString
@@ -60,7 +69,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
                 text = "Equipo Pokémon",
                 style = MaterialTheme.typography.titleLarge
             )
-            //TeamCard(profileState, modifier = modifier)
+            TeamCard(trainerState.pokemonTeam, modifier = modifier)
         }
 
     }
@@ -74,6 +83,7 @@ fun TrainerInfo(trainer: Trainer, navController: NavController){
     )
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_medium))
     ) {
         Row(
@@ -100,6 +110,7 @@ fun TrainerInfo(trainer: Trainer, navController: NavController){
                     text = "Fecha de nacimiento: ${trainer.birthdate.toFormattedString()}",
                     style = MaterialTheme.typography.bodySmall
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = { navController.navigate(AppScreens.EditTrainer.route) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -128,6 +139,7 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
 
     Card(
         elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
@@ -145,7 +157,7 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
                 }else{
                     null
                 }
-                Row(horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space))){
+                Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()){
                     it.second.forEach{medal ->
                         Image(
                             painter = painterResource(id = medal),
@@ -168,9 +180,49 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
 
 }
 
-/*@Composable
-fun TeamCard(profileState: ProfileUiState, modifier: Modifier) {
-}*/
+@Composable
+fun TeamCard(pokemonTeam: List<Pokemon>, modifier: Modifier = Modifier) {
+
+    val imageModifier = Modifier
+        .size(dimensionResource(id = R.dimen.medal_image))
+
+    Card(elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = dimensionResource(id = R.dimen.padding_medium))){
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
+        ){
+            for (i in 0..5){
+                if (i < pokemonTeam.size){
+                    AsyncImage(
+                        model = ImageRequest.Builder(context = LocalContext.current)
+                            .data(pokemonTeam[i].imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        error = painterResource(R.drawable.ic_broken_image),
+                        placeholder = painterResource(R.drawable.loading_img),
+                        contentDescription = pokemonTeam[i].name,
+                        contentScale = ContentScale.Crop,
+                        modifier = imageModifier
+                    )
+                } else {
+                    IconButton(onClick = { /*TODO SALE UN MODAL CON UN SEARCHBAR DE MATERIAL EN EL QUE SALEN TODOS LOS POKIMON*/ }, modifier = Modifier.padding(
+                        dimensionResource(id = R.dimen.padding_small))) {
+                        Icon(
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = stringResource(id = R.string.add_pokemon),
+                            tint = Color.Gray,
+                            modifier = imageModifier
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}
 /*
 @Preview("Mi perfil")
 @Composable

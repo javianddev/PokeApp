@@ -29,6 +29,6 @@ data class Medal(
     val image: Int,
 
     @NonNull
-    @ColumnInfo(name = "region_id")
+    @ColumnInfo(name = "region_id", index = true)
     val regionId: Int
 )

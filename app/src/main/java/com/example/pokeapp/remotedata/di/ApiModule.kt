@@ -1,6 +1,6 @@
 package com.example.pokeapp.remotedata.di
 
-import com.example.pokeapp.remotedata.repositories.PokemonRepository
+import com.example.pokeapp.remotedata.repositories.PokedexRepository
 import com.example.pokeapp.remotedata.services.ApiPokemonService
 import dagger.Module
 import dagger.Provides
@@ -38,9 +38,4 @@ class ApiModule {
         return retrofit.create(ApiPokemonService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun providePokemonRepository(apiPokemonService: ApiPokemonService): PokemonRepository {
-        return PokemonRepository(apiPokemonService)
-    }
 }

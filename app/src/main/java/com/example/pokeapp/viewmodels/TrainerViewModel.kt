@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapp.compose.utils.MedalResources
 import com.example.pokeapp.compose.utils.RegionConstants
+import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.data.models.Region
 import com.example.pokeapp.data.models.Trainer
+import com.example.pokeapp.data.repositories.PokemonRepository
 import com.example.pokeapp.data.repositories.RegionRepository
 import com.example.pokeapp.data.repositories.TrainerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class TrainerViewModel @Inject constructor(
     private val trainerRepository: TrainerRepository,
     private val regionRepository: RegionRepository,
+    private val pokemonRepository: PokemonRepository
     //private val medalRepository: MedalRepositry
 ): ViewModel(){
 
@@ -44,7 +47,8 @@ class TrainerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val trainer = trainerRepository.getTrainerById(1).first()
-                val regions:List<Region> = regionRepository.getAllRegion().first()
+                val regions: List<Region> = regionRepository.getAllRegion().first()
+                val pokemonTeam: List<Pokemon> = pokemonRepository.getAllPokemon().first()
 
                 for (region in regions){
                     when (region.id){
@@ -57,13 +61,20 @@ class TrainerViewModel @Inject constructor(
                 _uiState.update{currentState->
                     currentState.copy(
                         trainer = trainer,
-                        regions = regions
+                        regions = regions,
+                        pokemonTeam = pokemonTeam
                     )
                 }
 
             } catch (e: Exception) {
                 Log.e(null, "Error getting trainer TrainerViewModel --> $e")
             }
+        }
+    }
+    fun getPokedex(){
+        viewModelScope.launch {
+            /*TODO HACER LA LLAMADA A LA API PARA LA SEARCHBAR*/
+
         }
     }
 }
@@ -73,5 +84,5 @@ data class TrainerUiState(
     val trainer: Trainer = Trainer(1, "Rojo", LocalDate.now().minusYears(18), "Pueblo Paleta"),
     val regions: List<Region> = emptyList(),
     //val medals: List<Medal> = emptyList() /*TODO HAY QUE AVERIGUAR UNA MANERA CORRECTA DE HACER REFERENCIA A LOS DRAWABLES EN BBDD*/
-    //val pokemonTeam: List<Pokemon> = emptyList() /*TODO API*/
+    val pokemonTeam: List<Pokemon> = emptyList()
 )

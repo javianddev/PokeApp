@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.pokeapp.data.models.Trainer
 import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.data.models.PokemonDetail
+import com.example.pokeapp.remotedata.model.PokemonEntry
 import com.example.pokeapp.remotedata.model.PokemonInfo
 import com.example.pokeapp.remotedata.model.PokemonResponse
 import com.example.pokeapp.remotedata.model.Type
@@ -46,14 +47,14 @@ fun EditTrainerUiState.toTrainer(): Trainer = Trainer(
     birthplace = birthplace,
 )
 
-fun mapPokemonResToPokemon(pokemonResponse: PokemonResponse): List<Pokemon> {
+fun mapPokemonResToPokemon(pokemonResponse: PokemonResponse): List<PokemonEntry> {
     return pokemonResponse.results.map{result ->
         val id = if(result.url.endsWith("/")) {
             result.url.dropLast(1).takeLastWhile { it.isDigit() }
         } else {
             result.url.takeLastWhile { it.isDigit() }
         }
-        Pokemon(
+        PokemonEntry(
             id = id,
             name= result.name,
             imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png", //En PokeApi, los sprites van con esta URL

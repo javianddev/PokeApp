@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokeapp.data.models.PokemonDetail
-import com.example.pokeapp.remotedata.repositories.PokemonRepository
+import com.example.pokeapp.remotedata.repositories.PokedexRepository
 import com.example.pokeapp.utils.toPokemonDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class PokemonViewModel @Inject constructor(private val pokemonRepository:PokemonRepository, savedStateHandle: SavedStateHandle): ViewModel() {
+class PokemonViewModel @Inject constructor(private val pokedexRepository:PokedexRepository, savedStateHandle: SavedStateHandle): ViewModel() {
 
 
     var pokemonUiState: PokemonUiState by mutableStateOf(PokemonUiState.Loading)
@@ -33,7 +33,7 @@ class PokemonViewModel @Inject constructor(private val pokemonRepository:Pokemon
         viewModelScope.launch{
             pokemonUiState = PokemonUiState.Loading
             pokemonUiState = try {
-                PokemonUiState.Success(pokemonRepository.getPokemonInfo(pokemonId).toPokemonDetail())
+                PokemonUiState.Success(pokedexRepository.getPokemonInfo(pokemonId).toPokemonDetail())
             } catch (e: IOException) {
                 PokemonUiState.Error
             } catch (e: HttpException) {

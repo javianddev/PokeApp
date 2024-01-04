@@ -49,6 +49,7 @@
     <!--ContentDescription -->
     <string name="oak">El profesor Oak</string>
     <string name="info">Información</string>
+    <string name="add_pokemon">Añadir Pokémon</string>
 
     <!-- Textos -->
     <string name="stats">Estadísticas</string>

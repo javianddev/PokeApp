@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PokemonRepository @Inject constructor(private val apiPokemonService: ApiPokemonService) {
+class PokedexRepository @Inject constructor(private val apiPokemonService: ApiPokemonService) {
 
     suspend fun getPokemons(limit: Int, offset: Int) = apiPokemonService.getPokemon(limit, offset)
 
