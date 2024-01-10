@@ -55,13 +55,12 @@ class TrainerViewModel @Inject constructor(
         private set
 
     init {
-        getTrainerData()
+        getInitData()
     }
 
-    private fun getTrainerData() {
+    private fun getInitData() {
         viewModelScope.launch {
             try {
-                val trainer = trainerRepository.getTrainerById(1).first()
                 val regions: List<Region> = regionRepository.getAllRegion().first()
                 val pokemonTeam: List<Pokemon> = pokemonRepository.getAllPokemon().first()
 
@@ -75,7 +74,6 @@ class TrainerViewModel @Inject constructor(
 
                 _uiState.update{currentState->
                     currentState.copy(
-                        trainer = trainer,
                         regions = regions,
                         pokemonTeam = pokemonTeam
                     )
@@ -86,6 +84,41 @@ class TrainerViewModel @Inject constructor(
             }
         }
     }
+
+    fun getPokemonTeam(){
+        viewModelScope.launch {
+            try {
+                val pokemonTeam: List<Pokemon> = pokemonRepository.getAllPokemon().first()
+
+                _uiState.update{currentState->
+                    currentState.copy(
+                        pokemonTeam = pokemonTeam
+                    )
+                }
+
+            } catch (e: Exception) {
+                Log.e(null, "Error getting trainer TrainerViewModel --> $e")
+            }
+        }
+    }
+
+    fun getTrainerData(){
+        viewModelScope.launch {
+            try {
+                val trainer = trainerRepository.getTrainerById(1).first()
+
+                _uiState.update{currentState->
+                    currentState.copy(
+                        trainer = trainer
+                    )
+                }
+
+            } catch (e: Exception) {
+                Log.e(null, "Error getting trainer TrainerViewModel --> $e")
+            }
+        }
+    }
+
     fun getPokedex(){
         viewModelScope.launch {
             pokedexUiState = PokedexUiState.Loading
@@ -99,21 +132,48 @@ class TrainerViewModel @Inject constructor(
         }
     }
 
-    fun openModalSheet(){
+    fun openModalSheet(indexTeam: Int){
         _modalSheet.value = true
+        _uiState.update {currentState ->
+            currentState.copy(
+                indexButton = indexTeam
+            )
+        }
     }
 
     fun closeModalSheet(){
         _modalSheet.value = false
+        _uiState.update {currentState ->
+            currentState.copy(
+                indexButton = 0
+            )
+        }
+        _searchBarState.value = _searchBarState.value.copy(query = "")
     }
 
     fun setQuery(query: String){
-        Log.d("TRAINERVIEWMODEL", "VALOR DE QUERY --> $query")
         _searchBarState.value = _searchBarState.value.copy(query = query.lowercase())
     }
 
     fun setActive(active: Boolean){
         _searchBarState.value = _searchBarState.value.copy(active = active)
+    }
+
+    fun setPokemonTeam(pokemon: PokemonEntry){
+        viewModelScope.launch {
+            try {
+                val pokeToInsert = Pokemon(
+                    id = _uiState.value.indexButton,
+                    pokedexId = pokemon.id.toInt(),
+                    name = pokemon.name,
+                    imageUrl = pokemon.imageUrl
+                )
+                Log.i("SETPOKEMONTEAM", "$pokeToInsert")
+                pokemonRepository.insert(pokeToInsert)
+            } catch (e: Exception){
+                Log.e("TrainerSetPokemonTeam", "Error saving Pokemon: $e")
+            }
+        }
     }
 }
 
@@ -122,7 +182,8 @@ data class TrainerUiState(
     val trainer: Trainer = Trainer(1, "Rojo", LocalDate.now().minusYears(18), "Pueblo Paleta"),
     val regions: List<Region> = emptyList(),
     //val medals: List<Medal> = emptyList() /*TODO HAY QUE AVERIGUAR UNA MANERA CORRECTA DE HACER REFERENCIA A LOS DRAWABLES EN BBDD*/
-    val pokemonTeam: List<Pokemon> = emptyList()
+    val pokemonTeam: List<Pokemon> = emptyList(),
+    val indexButton: Int = 0
 )
 
 data class SearchBarStateUi(

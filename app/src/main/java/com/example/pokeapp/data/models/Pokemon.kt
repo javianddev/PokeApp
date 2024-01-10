@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "POKEMON")
 data class Pokemon(
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
 
     @NonNull

@@ -1,8 +1,8 @@
 package com.example.pokeapp.compose.trainer
 
 
-import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarColors
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -35,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -67,10 +65,10 @@ import java.util.Locale
 @Composable
 fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = hiltViewModel(), navController: NavController){
 
-    val trainerState by viewModel.uiState.collectAsState() /*TODO Hay que conseguir que se actualice la información automáticamente al editar el perfil*/
+    val trainerState by viewModel.uiState.collectAsState()
     val modalSheet by viewModel.modalSheet
     val regionMedal = viewModel.regionMedal
-    var searchBarState by viewModel.searchBarState
+    val searchBarState by viewModel.searchBarState
     val pokedexUiState = viewModel.pokedexUiState
 
 
@@ -78,7 +76,7 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            TrainerInfo(trainerState.trainer, navController)
+            TrainerInfo(trainerState.trainer, { viewModel.getTrainerData() },navController)
         }
 
         item {
@@ -94,18 +92,22 @@ fun TrainerScreen(modifier: Modifier = Modifier, viewModel: TrainerViewModel = h
                 text = "Equipo Pokémon",
                 style = MaterialTheme.typography.titleLarge
             )
-            TeamCard(trainerState.pokemonTeam, modifier = modifier, openModalSheet = { viewModel.openModalSheet() }
-            )
+            TeamCard(trainerState.pokemonTeam, modifier = modifier, openModalSheet = { viewModel.openModalSheet(it) })
         }
     }
     if (modalSheet){
         PokeTeamModalSheet({ viewModel.closeModalSheet() }, { viewModel.getPokedex() },
-            {viewModel.setQuery(it)}, {viewModel.setActive(it)}, searchBarState, pokedexUiState)
+            {viewModel.setQuery(it)}, {viewModel.setActive(it)}, {viewModel.setPokemonTeam(it)}, { viewModel.getPokemonTeam() },searchBarState, pokedexUiState)
     }
 }
 
 @Composable
-fun TrainerInfo(trainer: Trainer, navController: NavController){
+fun TrainerInfo(trainer: Trainer, getTrainerData: () -> Unit,navController: NavController){
+
+    LaunchedEffect(Unit){
+        getTrainerData()
+    }
+
     Text(
         text = stringResource(id = R.string.trainer_info),
         style = MaterialTheme.typography.titleLarge
@@ -205,10 +207,9 @@ fun MedalsCard(regionMedal: List<Pair<Region, List<Int>>>, /*medals: List<Medal>
 }
 
 @Composable
-fun TeamCard(pokemonTeam: List<Pokemon>, openModalSheet: () -> Unit, modifier: Modifier = Modifier) {
+fun TeamCard(pokemonTeam: List<Pokemon>, openModalSheet: (Int) -> Unit,modifier: Modifier = Modifier) {
 
-    val imageModifier = Modifier
-        .size(dimensionResource(id = R.dimen.medal_image))
+    val positions = listOf(1,2,3,4,5,6)
 
     Card(elevation = CardDefaults.cardElevation(dimensionResource(id = R.dimen.default_card_elevation)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
@@ -216,29 +217,33 @@ fun TeamCard(pokemonTeam: List<Pokemon>, openModalSheet: () -> Unit, modifier: M
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.padding_medium))){
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
+            horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()
         ){
-            for (i in 0..5){
-                if (i < pokemonTeam.size){
+            for ((index, i) in positions.withIndex()){
+                val datoIndex = pokemonTeam.indexOfFirst { it.id == i }
+                val pokemon = if (datoIndex != -1) pokemonTeam[datoIndex] else null
+                if (pokemon != null){
                     AsyncImage(
                         model = ImageRequest.Builder(context = LocalContext.current)
-                            .data(pokemonTeam[i].imageUrl)
+                            .data(pokemon.imageUrl)
                             .crossfade(true)
                             .build(),
                         error = painterResource(R.drawable.ic_broken_image),
                         placeholder = painterResource(R.drawable.loading_img),
-                        contentDescription = pokemonTeam[i].name,
+                        contentDescription = pokemon.name,
                         contentScale = ContentScale.Crop,
-                        modifier = imageModifier
+                        modifier = Modifier
+                            .size(dimensionResource(id = R.dimen.pokemon_team_image))
+                            .clickable {  openModalSheet(index + 1)  }
                     )
                 } else {
-                    IconButton(onClick = { openModalSheet() }, modifier = Modifier.padding(
+                    IconButton(onClick = { openModalSheet(index + 1) }, modifier = Modifier.padding(
                         dimensionResource(id = R.dimen.padding_small))) {
                         Icon(
                             imageVector = Icons.Filled.AddCircle,
                             contentDescription = stringResource(id = R.string.add_pokemon),
                             tint = Color.Gray,
-                            modifier = imageModifier
+                            modifier = Modifier.size(dimensionResource(id = R.dimen.icon_team))
                         )
                     }
                 }
@@ -251,8 +256,8 @@ fun TeamCard(pokemonTeam: List<Pokemon>, openModalSheet: () -> Unit, modifier: M
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeTeamModalSheet(closeModalSheet: () -> Unit,
-    getPokedex: () -> Unit, setQuery: (String) -> Unit, setActive: (Boolean) -> Unit, searchBarState: SearchBarStateUi, pokedexUiState: PokedexUiState){
+fun PokeTeamModalSheet(closeModalSheet: () -> Unit, getPokedex: () -> Unit, setQuery: (String) -> Unit, setActive: (Boolean) -> Unit,
+                       setPokemonTeam: (PokemonEntry) -> Unit, getPokemonTeam: () -> Unit, searchBarState: SearchBarStateUi, pokedexUiState: PokedexUiState){
 
     val modalBottomSheetState = rememberModalBottomSheetState()
 
@@ -266,19 +271,18 @@ fun PokeTeamModalSheet(closeModalSheet: () -> Unit,
         dragHandle = { BottomSheetDefaults.DragHandle() },
         containerColor = MaterialTheme.colorScheme.background
     ) {//Al separar de aqui la SearchBar evitamos la recomposición de esta función y no se lanza getPokedex muchas veces
-        PokedexSearchBar(searchBarState, pokedexUiState, {setQuery(it)}, {setActive(it)})
+        PokedexSearchBar(searchBarState, pokedexUiState, {setQuery(it)}, {setActive(it)}, {setPokemonTeam(it)}, { closeModalSheet() }, { getPokemonTeam() })
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokedexSearchBar(searchBarState: SearchBarStateUi, pokedexUiState: PokedexUiState, setQuery: (String) -> Unit, setActive: (Boolean) -> Unit){
-    Log.i("TrainerScreen", "Valor de query --> ${searchBarState.query}")
+fun PokedexSearchBar(searchBarState: SearchBarStateUi, pokedexUiState: PokedexUiState,
+                     setQuery: (String) -> Unit, setActive: (Boolean) -> Unit, setPokemonTeam: (PokemonEntry) -> Unit, closeModalSheet: () -> Unit, getPokemonTeam: () -> Unit){
     SearchBar(
         query = searchBarState.query,
-        onQueryChange = { setQuery(it)
-            Log.i("SEARCHBAR", "Valor de IT --> $it")},
+        onQueryChange = { setQuery(it) },
         onSearch = { setActive(false) },
         active = searchBarState.active,
         onActiveChange = { setActive(it) },
@@ -292,7 +296,7 @@ fun PokedexSearchBar(searchBarState: SearchBarStateUi, pokedexUiState: PokedexUi
         )
     ){
         when (pokedexUiState){
-            is PokedexUiState.Success -> PokedexScreen(pokedexUiState.pokemons, searchBarState)
+            is PokedexUiState.Success -> PokedexScreen(pokedexUiState.pokemons, searchBarState, {setPokemonTeam(it)}, { closeModalSheet() }, { getPokemonTeam() })
             is PokedexUiState.Error -> ErrorScreen(Modifier.fillMaxSize())
             is PokedexUiState.Loading -> Unit /*TODO Poner algo, no es tan importante*/
         }
@@ -300,13 +304,18 @@ fun PokedexSearchBar(searchBarState: SearchBarStateUi, pokedexUiState: PokedexUi
 }
 
 @Composable
-fun PokedexScreen(pokemons: List<PokemonEntry>, searchBarState: SearchBarStateUi){
+fun PokedexScreen(pokemons: List<PokemonEntry>, searchBarState: SearchBarStateUi, setPokemonTeam: (PokemonEntry) -> Unit, closeModalSheet: () -> Unit, getPokemonTeam: () -> Unit){
     if (searchBarState.query.isNotEmpty()){
         val filteredPokemons = pokemons.filter{ it.name.contains(searchBarState.query)}
         filteredPokemons.forEach{
             Row(
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.horizontal_space)),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    setPokemonTeam(it)
+                    closeModalSheet()
+                    getPokemonTeam()
+                }
             ){
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
@@ -320,7 +329,7 @@ fun PokedexScreen(pokemons: List<PokemonEntry>, searchBarState: SearchBarStateUi
                     modifier = Modifier.size(36.dp)
                 )
                 Text(
-                    text = "${it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }}",
+                    text = it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                     style = MaterialTheme.typography.labelMedium
                 )
             }

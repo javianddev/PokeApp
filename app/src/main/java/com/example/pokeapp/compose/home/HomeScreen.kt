@@ -59,7 +59,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
         columns = GridCells.Fixed(2),
         modifier = modifier
             .fillMaxSize()
-    ) { /*TODO Cuando realizamos la recarga de datos, nos manda al principio
+    ) { /*Cuando realizamos la recarga de datos, nos manda al principio
                             de nuevo, habría que mirar eso también
                             Según parece esto es un bug, debería de hacerlo solo --> https://stackoverflow.com/questions/68611320/remember-lazycolumn-scroll-position-jetpack-compose/75084854#75084854*/
         items(pokemons.itemCount){
