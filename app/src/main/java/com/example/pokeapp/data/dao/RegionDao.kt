@@ -19,7 +19,7 @@ interface RegionDao {
     suspend fun update(region: Region)
 
     @Query("UPDATE REGION SET medalAchieved = :achieved WHERE id = :regionId")
-    fun updateRegionMedal(regionId: Int, achieved: Int)
+    fun updateRegionMedal(regionId: Int, achieved: Boolean)
 
     @Delete
     suspend fun delete(region: Region)

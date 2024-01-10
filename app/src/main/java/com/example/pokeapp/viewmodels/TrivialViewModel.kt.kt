@@ -125,7 +125,7 @@ class TrivialViewModel @Inject constructor(private val questionRepository: Quest
                     //Y por supuesto, actualizamos la región, hemos conseguido las medallas
                     //Como estamos en el hilo principal, para la base de datos hay que usar el IO, así no se confunde y se bloquea
                     withContext(Dispatchers.IO){
-                        regionRepository.updateRegionMedal(regionId, Constants.TRUE)
+                        regionRepository.updateRegionMedal(regionId, true)
                     }
                 }
             } else { //Nos hemos equivocado, mostramos los errores

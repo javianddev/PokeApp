@@ -14,5 +14,4 @@ class MedalRepositry @Inject constructor(private val medalDao: MedalDao) {
     suspend fun insertMedal(medal: Medal) = medalDao.insert(medal)
     suspend fun updateMedal(medal: Medal) = medalDao.update(medal)
     suspend fun deleteMedal(medal: Medal) = medalDao.delete(medal)
-
 }
