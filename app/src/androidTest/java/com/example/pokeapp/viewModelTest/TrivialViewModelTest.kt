@@ -1,4 +1,4 @@
-package com.example.pokeapp.test
+package com.example.pokeapp.viewModelTest
 
 import com.example.pokeapp.viewmodels.TrivialViewModel
 

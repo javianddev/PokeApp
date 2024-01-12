@@ -252,8 +252,6 @@ fun PokemonStats(stats: List<Stat>, modifier: Modifier = Modifier){
 
 @Composable
 fun PokemonBarStat(baseStat: Int, stat: StatX){
-    val progress = baseStat/100f
-
 
     Text(
         text = "${stat.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }} - $baseStat",
@@ -262,7 +260,7 @@ fun PokemonBarStat(baseStat: Int, stat: StatX){
     )
 
     LinearProgressIndicator(
-        progress = progress,
+        progress = baseStat / 200f,
         color = getStatColor(baseStat),
         strokeCap = StrokeCap.Round,
         modifier = Modifier
