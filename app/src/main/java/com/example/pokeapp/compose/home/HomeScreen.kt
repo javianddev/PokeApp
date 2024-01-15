@@ -1,5 +1,6 @@
 package com.example.pokeapp.compose.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -31,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,7 +48,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.pokeapp.R
 import com.example.pokeapp.compose.navigation.AppScreens
-import com.example.pokeapp.data.models.Pokemon
 import com.example.pokeapp.remotedata.model.PokemonEntry
 import com.example.pokeapp.viewmodels.HomeViewModel
 import java.util.Locale
@@ -114,6 +116,7 @@ fun PokemonCard(pokemon: PokemonEntry, navController: NavController){
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .fillMaxWidth()
             .clickable { navController.navigate(AppScreens.PokemonScreen.route + "/${pokemon.id}") }
+            .testTag("pokemonNav") //Para testing
     ){
         Column(
             verticalArrangement = Arrangement.SpaceAround,

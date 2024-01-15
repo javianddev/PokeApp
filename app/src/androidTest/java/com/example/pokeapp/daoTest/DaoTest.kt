@@ -10,24 +10,31 @@ import com.example.pokeapp.data.dao.QuestionDao
 import com.example.pokeapp.data.dao.RegionDao
 import com.example.pokeapp.data.dao.SolutionDao
 import com.example.pokeapp.data.dao.TrainerDao
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Named
 
 @RunWith(AndroidJUnit4::class)
 class DaoTest {
+
 
     private lateinit var questionDao: QuestionDao
     private lateinit var solutionDao: SolutionDao
     private lateinit var regionDao: RegionDao
     private lateinit var pokemonDao: PokemonDao
     private lateinit var trainerDao: TrainerDao
+
     private lateinit var pokeDb: AppDatabase
 
     @Before

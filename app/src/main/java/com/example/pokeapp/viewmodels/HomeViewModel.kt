@@ -1,6 +1,7 @@
 package com.example.pokeapp.viewmodels
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -26,7 +27,7 @@ class HomeViewModel @Inject constructor(private val pokedexRepository: PokedexRe
         getPokemons()
     }
 
-    private fun getPokemons(){
+    fun getPokemons(){
         viewModelScope.launch {
             Pager(
                 config = PagingConfig(20, enablePlaceholders = false)

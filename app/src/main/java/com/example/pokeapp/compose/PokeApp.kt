@@ -1,5 +1,6 @@
 package com.example.pokeapp.compose
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -37,7 +38,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -51,9 +51,7 @@ import com.example.pokeapp.compose.utils.currentRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokeApp(){
-
-    val navController = rememberNavController()
+fun PokeApp(navController: NavHostController = rememberNavController()){
 
     val barState = rememberSaveable { (mutableStateOf(true)) }
 
@@ -65,6 +63,9 @@ fun PokeApp(){
             currentRoute.startsWith(route) || currentRoute.startsWith("$route/")
         }
     }
+
+    Log.d("HOME", "$currentRoute")
+
 
     val modifier = Modifier
         .fillMaxWidth()
