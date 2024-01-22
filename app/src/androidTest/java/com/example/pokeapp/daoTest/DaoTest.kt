@@ -25,7 +25,8 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class DaoTest {
 
 

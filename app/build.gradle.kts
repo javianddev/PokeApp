@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" //"com.example.pokeapp."
+        testInstrumentationRunner = "com.example.pokeapp.HiltTestRunner"//"androidx.test.runner.AndroidJUnitRunner" //"com.example.pokeapp."
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -124,6 +124,8 @@ dependencies {
 
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
     kaptTest("com.google.dagger:hilt-android-compiler:2.44.")
+
+
 
 
 }

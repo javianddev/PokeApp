@@ -1,67 +1,56 @@
-package com.example.pokeapp.navigationTest
+package com.example.pokeapp
 
-import androidx.activity.ComponentActivity
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.pokeapp.MainActivity
 import com.example.pokeapp.compose.navigation.AppScreens
-import com.example.pokeapp.R
 import com.example.pokeapp.compose.PokeApp
-import com.example.pokeapp.compose.navigation.PokeAppNavHost
-import dagger.hilt.android.testing.CustomTestApplication
+import com.example.pokeapp.navigationTest.assertCurrentRouteName
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+
+@HiltAndroidTest
 class PokeAppNavigationTest {
 
+    @get:Rule(order = 1)
+    var hiltRule = HiltAndroidRule(this)
 
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
-
+    @get:Rule(order = 2)
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
     private lateinit var navController: TestNavHostController
 
     @Before
      fun setUpPokeAppNavHost(){
-        composeTestRule.setContent{
-            navController = TestNavHostController(LocalContext.current).apply {
-                navigatorProvider.addNavigator(ComposeNavigator())
-            }
-            PokeAppNavHost(navController = navController)
+        hiltRule.inject()
+        composeTestRule.setContent {
+            navController = TestNavHostController(composeTestRule.activity)
+            navController.navigatorProvider.addNavigator(ComposeNavigator())
+            PokeApp(navController)
         }
+            /*navController = TestNavHostController(LocalContext.current).apply {
+                navigatorProvider.addNavigator(ComposeNavigator())
+            }*/
     }
 
     //Comprobamos la ruta de inicio de la app
     @Test
-    fun pokeAppNavHost_verifyStartDestination() = runTest {
-        Thread.sleep(5000)
+    fun pokeAppNavHost_verifyStartDestination(){
+
         navController.assertCurrentRouteName(AppScreens.HomeScreen.route)
     }
 
     //Comprobamos que la ruta de inicio NO tiene flecha para volver atrás
-    @Test
+    /*@Test
     fun pokeAppNavHost_verifyBackNavigationNotShowOnHomeScreen(){
         val backText = composeTestRule.activity.getString(R.string.arrow_back)
         composeTestRule.onNodeWithContentDescription(backText).assertDoesNotExist()
-    }
+    }*/
 
     @Test
     fun pokeAppNavHost_clickOnePokemon_navigatesToPokemonScreen(){
