@@ -24,12 +24,28 @@ android {
     }
 
     buildTypes {
-        release {
+        /*release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }*/
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        getByName("debug") {
+            isJniDebuggable = true
+            isDebuggable = true
+            sourceSets {
+                getByName("main") {
+                    manifest.srcFile("src/debug/kotlin/AndroidManifest.xml")
+                }
+            }
         }
     }
     compileOptions {

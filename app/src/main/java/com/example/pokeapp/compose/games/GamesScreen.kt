@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,7 +55,7 @@ fun GamesScreen(navController: NavController, viewModel:GamesScreenViewModel = h
                 //Dependiendo de si la región anterior está desbloqueada, podemos acceder a la actual (a no ser que sea la primera, que se accede siempre)
                     if(index == 0 || gamesUiState.regions.getOrNull(index - 1)?.medalAchieved == true){
                         Modifier
-                            .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }
+                            .clickable { navController.navigate(AppScreens.Trivial.route + "/${region.id}") }.testTag("trivial_$index")
                     } else{
                         Modifier
                     }

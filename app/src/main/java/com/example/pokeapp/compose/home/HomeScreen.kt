@@ -116,7 +116,7 @@ fun PokemonCard(pokemon: PokemonEntry, navController: NavController){
             .padding(dimensionResource(id = R.dimen.padding_medium))
             .fillMaxWidth()
             .clickable { navController.navigate(AppScreens.PokemonScreen.route + "/${pokemon.id}") }
-            .testTag("pokemonNav") //Para testing
+            .testTag("pokemon${pokemon.id}") //Para testing
     ){
         Column(
             verticalArrangement = Arrangement.SpaceAround,

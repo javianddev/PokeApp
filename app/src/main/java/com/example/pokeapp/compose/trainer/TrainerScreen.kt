@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -145,6 +146,7 @@ fun TrainerInfo(trainer: Trainer, getTrainerData: () -> Unit,navController: NavC
                 Button(
                     onClick = { navController.navigate(AppScreens.EditTrainer.route) },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.testTag("edit_trainer")
                 ) {
                     Text(
                         text = stringResource(id = R.string.edit_trainer),
@@ -234,7 +236,7 @@ fun TeamCard(pokemonTeam: List<Pokemon>, openModalSheet: (Int) -> Unit,modifier:
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(dimensionResource(id = R.dimen.pokemon_team_image))
-                            .clickable {  openModalSheet(index + 1)  }
+                            .clickable { openModalSheet(index + 1) }
                     )
                 } else {
                     IconButton(onClick = { openModalSheet(index + 1) }, modifier = Modifier.padding(

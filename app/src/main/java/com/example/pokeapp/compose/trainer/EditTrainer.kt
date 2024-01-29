@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -127,7 +128,7 @@ fun EditTrainer(navController: NavController, viewModel: EditTrainerViewModel = 
                 navController.popBackStack(AppScreens.TrainerScreen.route, inclusive = false)
             },
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium)).testTag("save_data")
         ) {
             Text(
                 text = stringResource(id = R.string.save_button)
