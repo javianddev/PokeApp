@@ -12,6 +12,8 @@ import com.example.pokeapp.compose.navigation.AppScreens
 import com.example.pokeapp.compose.PokeApp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,9 +38,7 @@ class PokeAppNavigationTest {
             navController.navigatorProvider.addNavigator(ComposeNavigator())
             PokeApp(navController)
         }
-            /*navController = TestNavHostController(LocalContext.current).apply {
-                navigatorProvider.addNavigator(ComposeNavigator())
-            }*/
+
     }
 
     //Comprobamos la ruta de inicio de la app
@@ -102,16 +102,16 @@ class PokeAppNavigationTest {
 
     @Test
     fun pokeAppNavHost_verifyNavigationToGamesScreen(){
-        val trainerText = composeTestRule.activity.getString(R.string.options_icon)
-        composeTestRule.onNodeWithContentDescription(trainerText).performClick()
+        val gamesText = composeTestRule.activity.getString(R.string.options_icon)
+        composeTestRule.onNodeWithContentDescription(gamesText).performClick()
         navController.assertCurrentRouteName(AppScreens.GamesScreen.route)
     }
 
     @Test
     fun pokeAppNavHost_verifyNavigationToTrivialScreen(){
-        val trainerText = composeTestRule.activity.getString(R.string.options_icon)
-        composeTestRule.onNodeWithContentDescription(trainerText).performClick()
-        composeTestRule.onNodeWithTag("trivial_0").performClick() //Hay que poner uno único sino encuentra más de uno
+        val gamesText = composeTestRule.activity.getString(R.string.options_icon)
+        composeTestRule.onNodeWithContentDescription(gamesText).performClick()
+        composeTestRule.onNodeWithTag("trivial_0").performClick()
         navController.assertCurrentRouteName(AppScreens.Trivial.route + "/{region_id}")
     }
 
@@ -126,16 +126,16 @@ class PokeAppNavigationTest {
         navController.assertCurrentRouteName(AppScreens.HomeScreen.route)
     }
 
-    //TODO: Arreglar esto, hay que dejar un tiempo para que cargue la API.
-
     @Test
-    fun pokeAppNavHost_verifyNavigationToPokemonScreen(){
+    fun pokeAppNavHost_verifyNavigationToPokemonScreen() = runBlocking{
+        Thread.sleep(2000) //Esperamos a que cargue la API
         composeTestRule.onNodeWithTag("pokemon1").performClick()
-        navController.assertCurrentRouteName(AppScreens.PokemonScreen.route)
+        navController.assertCurrentRouteName(AppScreens.PokemonScreen.route + "/{pokemon_id}")
     }
 
     @Test
     fun pokeAppNavHost_verifyBackNavigationShowsOnPokemonScreen(){
+        Thread.sleep(2000) //Esperamos a que cargue la API
         composeTestRule.onNodeWithTag("pokemon1").performClick()
         val backText = composeTestRule.activity.getString(R.string.arrow_back)
         composeTestRule.onNodeWithContentDescription(backText).assertExists()
@@ -143,6 +143,7 @@ class PokeAppNavigationTest {
 
     @Test
     fun pokeAppNavHost_verifyBackNavigationToHomeScreen(){
+        Thread.sleep(2000) //Esperamos a que cargue la API
         composeTestRule.onNodeWithTag("pokemon1").performClick()
         val backText = composeTestRule.activity.getString(R.string.arrow_back)
         composeTestRule.onNodeWithContentDescription(backText).performClick()

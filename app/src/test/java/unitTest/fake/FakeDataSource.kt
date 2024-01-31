@@ -1,7 +1,10 @@
 package unitTest.fake
 
+import com.example.pokeapp.data.models.Trainer
+import com.example.pokeapp.remotedata.model.PokemonInfo
 import com.example.pokeapp.remotedata.model.PokemonResponse
 import com.example.pokeapp.remotedata.model.Result
+import java.time.LocalDate
 
 object FakeDataSource {
     val pokemonResponse =
@@ -20,6 +23,11 @@ object FakeDataSource {
                 ),
             )
         )
-
-    //val pokemonInfo =
+    val trainerResponse =
+        Trainer(
+            id = 1,
+            name = "Javier",
+            birthdate = LocalDate.now().minusYears(18),
+            birthplace = ""
+        )
 }

@@ -51,7 +51,7 @@ class EditTrainerViewModel @Inject constructor(private val trainerRepository: Tr
         return !(uiState.value.name.isEmpty() || uiState.value.birthplace.isEmpty())
     }
 
-    private fun getProfile() {
+    internal fun getProfile() {
         viewModelScope.launch{
             try {
                 trainerRepository.getTrainerById(1).collect { result ->

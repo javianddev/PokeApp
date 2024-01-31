@@ -16,7 +16,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class PokemonViewModel @Inject constructor(private val pokedexRepository:PokedexRepository, savedStateHandle: SavedStateHandle): ViewModel() {
+class PokemonViewModel @Inject constructor(private val pokedexRepository:PokedexRepository, savedStateHandle: SavedStateHandle = SavedStateHandle()): ViewModel() {
 
 
     var pokemonUiState: PokemonUiState by mutableStateOf(PokemonUiState.Loading)

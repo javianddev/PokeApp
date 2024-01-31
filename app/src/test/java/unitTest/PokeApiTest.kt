@@ -38,14 +38,5 @@ class PokeApiTest {
         assertEquals(result, pokemonResponse)
     }
 
-    /*@Test
-    fun testGetPokemonInfo() = runTest {
-        val pokemonInfo = FakeDataSource.pokemonInfo
-        `when`(apiPokemonService.getPokemonInfo(1)).thenReturn(pokemonInfo)
-        val result = pokedexRepository.getPokemonInfo(1)
-        assertNotNull(result)
-        assertEquals(result, pokemonInfo)
-
-    }*/
 
 }
