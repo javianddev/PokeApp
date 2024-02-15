@@ -19,5 +19,8 @@ La aplicación cuenta con las siguientes pantallas:
 
 
 Trivial con contador de tiempo funcional. ¡Responde rápido!
-https://github.com/javianddev/PokeApp/assets/142154025/54939146-8153-4bf2-90e0-c6bc33d72bda
+
+
+
+
 
