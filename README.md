@@ -1,7 +1,7 @@
 POKEAPP es una aplicación realizada enteramente con Jetpack Compose y Kotlin.
 
 Se han utilizado, entre otras, las siguiente librerías:
-- Compose
+- Jetpack Compose
 - Compose Navigation
 - Material 3
 - Room
