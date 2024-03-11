@@ -14,7 +14,12 @@ Se han utilizado, entre otras, las siguiente librerías:
 
 El objetivo de la aplicación ha sido el manejo de datos recuperados de una API remota como pokeapi y el manejo de datos desde local con la ayuda de Room. También se ha hecho una iniciación al testing, probándose la UI cuyo enfoque ha sido hacia la navegación y el correcto funcionamiento de la BBDD.
 
-La aplicación cuenta con las siguientes pantallas:
+La aplicación cuenta con:
+Perfil individual donde editar nuestros datos personales (nombre, ciudad y fecha de nacimiento). También podremos elegir nuestros 6 pokémon favoritos. Estos datos son persistentes gracias a Room.
+Acceso a una pokédex y a datos básicos de cada pokémon. Se accede a una API a través de Retrofit. La carga de datos es dinámica gracias a Paging3
+Trivial de preguntas pokémon. Podremos ganar medallas e ir desbloqueando nuevas regiones. Persistencia de datos con Room.
+
+Algunas pantallas de la aplicación:
 
 Acerca de PokeApp dentro de la aplicación (uso de Modal):
 
